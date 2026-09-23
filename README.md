@@ -16,6 +16,7 @@ for more detailed information.
 * [Usage](#usage)
   - [ProBoards Scraper tool](#pbs)
   - [ProBoards Scraper Database tool](#pbd)
+* [ProBoards-style forum software](#forum)
 
 
 # Disclaimer
@@ -216,3 +217,112 @@ optional arguments:
   --thread [thread_id], -t [thread_id]
                         Thread id; if omitted, list all threads
 ```
+
+
+<span id="forum"></span>
+# ProBoards-style forum software
+
+The `proboards_forum` package is a self-hosted forum modeled on the classic
+ProBoards v4.5 layout and feature set. It is an original implementation
+(Flask + SQLAlchemy + SQLite) and is not affiliated with ProBoards.
+
+## Features
+
+* **Categories, boards and sub-boards**, with thread/post counts, last post
+  info and new-post indicators rolled up from sub-boards.
+* **Threads** with sticky, announcement (shown on every board) and locked
+  states, view counts, pagination, and moving/deleting by moderators.
+* **Posts** written in BBCode (bold, italics, links, images, quotes, code,
+  lists, colors, sizes, smileys) with a formatting toolbar, preview, quoting,
+  editing ("last edited by…") and deleting.
+* **Polls** attached to new threads, one vote per member, which can be closed.
+* **Shoutbox** on the home page.
+* **Info Center** with forum statistics, the newest member and who's online.
+* **Members**: registration, login, profiles (avatar upload or URL,
+  signature, status, location, website, birthday, gender), a sortable
+  member list and per-member post counts.
+* **Private conversations** between two or more members, with unread counts.
+* **Search** across posts or thread titles, filtered by board or author, plus
+  a "Recent threads" page.
+* **Roles**: Administrator, Global Moderator and Member, plus per-board
+  moderators and custom rank titles. Members can be banned.
+* **Admin panel** for forum name/description, an announcement bar, page
+  sizes, theme color, toggling the shoutbox and registration, managing
+  categories and boards (including staff-only and read-only boards), and
+  managing members.
+* **Import from `pbs`**: turn a scraped forum into a working forum, keeping
+  the original user, board, thread and post ids.
+
+Security basics are built in: hashed passwords, CSRF tokens on every form,
+HTML-escaped BBCode, allowlist sanitizing of imported HTML, and uploads
+limited to images.
+
+## Running the forum
+
+```
+pip install .
+
+# Create an admin account and a starter board, then start the server.
+pbf init --username admin
+pbf run
+```
+
+Then open http://127.0.0.1:5000. Alternatively, skip `pbf init`. The first
+person to register on a new forum becomes its administrator.
+
+The forum keeps its database (`forum.db`), secret key and uploads in a data
+directory. The default is `./forum`. Set a different one with
+`-i`/`--instance` or the `PBF_INSTANCE` environment variable:
+
+```
+pbf -i /srv/myforum run --host 0.0.0.0 --port 8000
+```
+
+`pbf run` uses Flask's development server. For a public site, run it with a
+production WSGI server behind HTTPS instead, e.g.:
+
+```
+pip install gunicorn
+PBF_INSTANCE=/srv/myforum PBF_SECURE_COOKIES=1 \
+    gunicorn -w 4 -b 127.0.0.1:8000 "proboards_forum:create_app()"
+```
+
+## Importing a scraped forum
+
+Import the output directory of `pbs` into a **new, empty** forum instance.
+Members, avatars, categories, boards, moderators, threads, posts (including
+guest posts), polls and shoutbox posts are imported. Password-protected
+boards become staff-only boards.
+
+```
+pbs https://yoursite.proboards.com -o ./site
+pbf -i ./myforum import ./site
+
+# Imported members have no password. Give yourself one (and admin rights):
+pbf -i ./myforum set-password your_username --admin
+pbf -i ./myforum run
+```
+
+Admins can set passwords for other imported members from
+*Admin → Members*.
+
+## pbf
+
+```
+usage: pbf [-h] [-i <path>] {run,init,import,set-password} ...
+
+  run            Start the web server (--host, --port, --debug)
+  init           Create the admin account and a starter board
+                 (--username, --password, --email)
+  import         Import a forum scraped with pbs (path to pbs output
+                 directory or forum.db)
+  set-password   Set a member's password (--password, --admin)
+```
+
+## Tests
+
+```
+pip install pytest
+python -m pytest tests
+```
+

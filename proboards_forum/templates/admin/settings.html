@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import csrf %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+{% include 'admin/_nav.html' %}
+<div class="container">
+  <div class="title-bar"><h2>Forum Settings</h2></div>
+  <div class="content padded">
+    <form class="stacked" method="post">
+      {{ csrf() }}
+      <label for="forum_name">Forum name</label>
+      <input type="text" id="forum_name" name="forum_name" value="{{ settings.forum_name }}" required>
+      <label for="forum_description">Description <span class="hint">(shown in the banner)</span></label>
+      <input type="text" id="forum_description" name="forum_description" value="{{ settings.forum_description }}">
+      <label for="announcement">Announcement bar <span class="hint">(BBCode; shown on every page; leave empty to hide)</span></label>
+      <textarea id="announcement" name="announcement" style="min-height: 80px">{{ settings.announcement }}</textarea>
+      <div class="two-col">
+        <div><label for="threads_per_page">Threads per page</label><input type="number" min="1" max="200" id="threads_per_page" name="threads_per_page" value="{{ settings.threads_per_page }}"></div>
+        <div><label for="posts_per_page">Posts per page</label><input type="number" min="1" max="200" id="posts_per_page" name="posts_per_page" value="{{ settings.posts_per_page }}"></div>
+        <div><label for="members_per_page">Members per page</label><input type="number" min="1" max="200" id="members_per_page" name="members_per_page" value="{{ settings.members_per_page }}"></div>
+        <div><label for="theme_color">Theme color</label><input type="color" id="theme_color" name="theme_color" value="{{ settings.theme_color }}"></div>
+      </div>
+      <label class="checkbox"><input type="checkbox" name="shoutbox_enabled" value="1"{{ ' checked' if settings.shoutbox_enabled == '1' }}> Enable shoutbox</label>
+      <label class="checkbox"><input type="checkbox" name="registration_open" value="1"{{ ' checked' if settings.registration_open == '1' }}> Allow new registrations</label>
+      <div class="form-actions"><button type="submit">Save Settings</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

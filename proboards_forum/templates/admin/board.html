@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import csrf %}
+{% block title %}{{ board.name if board else 'New Board' }}{% endblock %}
+{% block content %}
+{% include 'admin/_nav.html' %}
+{% set f = request.form %}
+<div class="container">
+  <div class="title-bar"><h2>{{ 'Edit Board: ' ~ board.name if board else 'New Board' }}</h2></div>
+  <div class="content padded">
+    <form class="stacked" method="post">
+      {{ csrf() }}
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" maxlength="128" value="{{ f.get('name', board.name if board else '') }}" required>
+      <label for="description">Description <span class="hint">(HTML allowed)</span></label>
+      <textarea id="description" name="description" style="min-height: 80px">{{ f.get('description', (board.description or '') if board else '') }}</textarea>
+      <div class="two-col">
+        <div>
+          <label for="category_id">Category</label>
+          {% set selected_category = f.get('category_id', board.category_id if board else '') | string %}
+          <select id="category_id" name="category_id">
+            {% for c in categories %}<option value="{{ c.id }}"{{ ' selected' if c.id | string == selected_category }}>{{ c.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="parent_id">Parent board <span class="hint">(makes this a sub-board)</span></label>
+          {% set selected_parent = f.get('parent_id', board.parent_id if board and board.parent_id else '') | string %}
+          <select id="parent_id" name="parent_id">
+            <option value="">None (top-level board)</option>
+            {% for b in parents %}<option value="{{ b.id }}"{{ ' selected' if b.id | string == selected_parent }}>{{ b.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="position">Position <span class="hint">(lower comes first)</span></label>
+          <input type="number" id="position" name="position" value="{{ f.get('position', board.position if board else 0) }}">
+        </div>
+        <div>
+          <label for="moderators">Moderators <span class="hint">(usernames, comma-separated)</span></label>
+          <input type="text" id="moderators" name="moderators" value="{{ f.get('moderators', board.moderators | map(attribute='username') | join(', ') if board else '') }}">
+        </div>
+      </div>
+      <label class="checkbox"><input type="checkbox" name="staff_only" value="1"{{ ' checked' if (f.get('staff_only') if f else board and board.staff_only) }}> Staff only (hidden from members and guests)</label>
+      <label class="checkbox"><input type="checkbox" name="read_only" value="1"{{ ' checked' if (f.get('read_only') if f else board and board.read_only) }}> Read only (only moderators can start threads)</label>
+      <div class="form-actions"><button type="submit">Save Board</button></div>
+    </form>
+  </div>
+</div>
+
+{% if board %}
+<div class="container">
+  <div class="title-bar"><h2>Delete Board</h2></div>
+  <div class="content padded">
+    <form method="post" action="{{ url_for('admin.delete_board', board_id=board.id) }}" data-confirm="Delete this board?">
+      {{ csrf() }}
+      <label for="move_to">Move its threads to</label>
+      <select id="move_to" name="move_to" style="width: auto">
+        <option value="">Nowhere &ndash; delete them</option>
+        {% for b in parents %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}
+      </select>
+      <button class="danger" type="submit">Delete Board</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

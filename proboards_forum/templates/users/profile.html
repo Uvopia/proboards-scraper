@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import avatar with context %}
+{% block title %}{{ user.display_name }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="title-bar">
+    <h2>{{ user.display_name }}</h2>
+    {% if current_user and (current_user.id == user.id or current_user.is_admin) %}
+    <a href="{{ url_for('users.edit_profile', user_id=user.id) }}">Edit Profile</a>
+    {% endif %}
+  </div>
+  <div class="content padded profile">
+    <div class="side">
+      {{ avatar(user, 150) }}
+      <div class="user-name" style="font-weight: bold; font-size: 15px; margin-top: 6px">{{ user.display_name }}</div>
+      <div class="rank">{{ user.role_title }}{% if user.banned %} (banned){% endif %}</div>
+      {% if online %}<div><span class="online-dot"></span>Online now</div>{% endif %}
+      {% if user.status %}<p><em>{{ user.status }}</em></p>{% endif %}
+      {% if current_user and current_user.id != user.id %}
+      <p><a class="button" href="{{ url_for('messages.new', to=user.username) }}">Send Message</a></p>
+      {% endif %}
+    </div>
+    <div>
+      <dl>
+        <dt>Username</dt><dd>{{ user.username }}</dd>
+        <dt>Posts</dt><dd>{{ '{:,}'.format(post_count) }}</dd>
+        <dt>Threads started</dt><dd>{{ '{:,}'.format(thread_count) }}</dd>
+        <dt>Member since</dt><dd>{{ user.date_registered | date(false) }}</dd>
+        <dt>Last active</dt><dd>{{ (user.last_active | date) or 'Never' }}</dd>
+        {% if user.gender %}<dt>Gender</dt><dd>{{ user.gender }}</dd>{% endif %}
+        {% if user.birthdate %}<dt>Birthday</dt><dd>{{ user.birthdate }}</dd>{% endif %}
+        {% if user.location %}<dt>Location</dt><dd>{{ user.location }}</dd>{% endif %}
+        {% if user.website_url %}<dt>Website</dt><dd><a href="{{ user.website_url }}" rel="nofollow noopener">{{ user.website or user.website_url }}</a></dd>{% endif %}
+        {% for name, handle in messengers %}<dt>{{ name }}</dt><dd>{{ handle }}</dd>{% endfor %}
+      </dl>
+      {% if user.signature %}
+      <h3>Signature</h3>
+      <div class="signature" style="max-height: none">{{ user.signature | render(user.signature_format) }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="title-bar"><h2>Recent Posts</h2><a href="{{ url_for('forum.search', author=user.username) }}">View all</a></div>
+  <div class="content">
+    <table class="list"><tbody>
+    {% for post in recent_posts %}
+      <tr><td>
+        <a class="name" href="{{ post_url(post) }}">{{ post.thread.title }}</a>
+        <div class="description">{{ post.created_at | date }} in {{ post.thread.board.name }}</div>
+        <div class="message">{{ post.body | render(post.body_format) }}</div>
+      </td></tr>
+    {% else %}
+      <tr><td class="empty">No posts yet.</td></tr>
+    {% endfor %}
+    </tbody></table>
+  </div>
+</div>
+{% endblock %}

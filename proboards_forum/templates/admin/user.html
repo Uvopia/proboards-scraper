@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import csrf %}
+{% block title %}{{ user.username }}{% endblock %}
+{% block content %}
+{% include 'admin/_nav.html' %}
+<div class="container">
+  <div class="title-bar"><h2>Member: {{ user.username }}</h2><a href="{{ url_for('users.edit_profile', user_id=user.id) }}">Edit profile</a></div>
+  <div class="content padded">
+    <form class="stacked" method="post">
+      {{ csrf() }}
+      <label for="role">Role</label>
+      <select id="role" name="role">
+        {% for value, label in roles.items() %}<option value="{{ value }}"{{ ' selected' if user.role == value }}>{{ label }}</option>{% endfor %}
+      </select>
+      <label for="title">Custom title <span class="hint">(shown instead of the role name; optional)</span></label>
+      <input type="text" id="title" name="title" maxlength="64" value="{{ user.title or '' }}">
+      <label for="password">Set password <span class="hint">(leave blank to keep the current one)</span></label>
+      <input type="password" id="password" name="password" autocomplete="new-password" minlength="8">
+      <label class="checkbox"><input type="checkbox" name="banned" value="1"{{ ' checked' if user.banned }}> Banned</label>
+      <div class="form-actions"><button type="submit">Save</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

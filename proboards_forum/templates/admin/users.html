@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import pagination %}
+{% block title %}Members{% endblock %}
+{% block content %}
+{% include 'admin/_nav.html' %}
+<div class="controls">
+  <form method="get" style="display: flex; gap: 6px">
+    <input type="search" name="q" value="{{ query }}" placeholder="Username, name or email" aria-label="Search members">
+    <button type="submit">Search</button>
+  </form>
+  {{ pagination(page, 'admin.users', q=query) }}
+</div>
+<div class="container">
+  <div class="title-bar"><h2>Members</h2></div>
+  <div class="content">
+    <table class="list">
+      <thead><tr><th>ID</th><th>Username</th><th>Display name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for user in page.items %}
+        <tr>
+          <td>{{ user.id }}</td>
+          <td><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ user.username }}</a></td>
+          <td>{{ user.display_name }}</td>
+          <td>{{ user.email or '' }}</td>
+          <td>{{ user.role_title }}</td>
+          <td>{% if user.banned %}<span class="tag announcement">Banned</span>{% endif %}{% if not user.password_hash %}<span class="tag">No password</span>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

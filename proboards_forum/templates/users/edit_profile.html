@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import avatar, csrf with context %}
+{% block title %}Edit Profile{% endblock %}
+{% block content %}
+{% macro field(name, label, value, type='text', hint='', maxlength=255) -%}
+  <label for="{{ name }}">{{ label }}{% if hint %} <span class="hint">({{ hint }})</span>{% endif %}</label>
+  <input type="{{ type }}" id="{{ name }}" name="{{ name }}" value="{{ request.form.get(name, value or '') }}" maxlength="{{ maxlength }}">
+{%- endmacro %}
+<div class="container">
+  <div class="title-bar"><h2>Edit Profile: {{ user.display_name }}</h2><a href="{{ url_for('users.profile', user_id=user.id) }}">View Profile</a></div>
+  <div class="content padded">
+    <form class="stacked" method="post" enctype="multipart/form-data">
+      {{ csrf() }}
+      <fieldset>
+        <legend>Personal</legend>
+        <div class="two-col">
+          <div>{{ field('display_name', 'Display name', user.display_name, maxlength=64) }}</div>
+          <div>{{ field('email', 'Email', user.email, type='email') }}</div>
+          <div>{{ field('status', 'Status', user.status, hint='a short personal message') }}</div>
+          <div>{{ field('location', 'Location', user.location, maxlength=128) }}</div>
+          <div>{{ field('birthdate', 'Birthday', user.birthdate, maxlength=32) }}</div>
+          <div>{{ field('gender', 'Gender', user.gender, maxlength=16) }}</div>
+          <div>{{ field('website', 'Website name', user.website, maxlength=128) }}</div>
+          <div>{{ field('website_url', 'Website URL', user.website_url, type='url', maxlength=512) }}</div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Avatar</legend>
+        <div style="margin-top: 8px">{{ avatar(user, 100) }}</div>
+        {{ field('avatar_url', 'Avatar URL', user.avatar_url, hint='link to an image', maxlength=512) }}
+        <label for="avatar_file">Or upload an image <span class="hint">(PNG, JPG, GIF or WebP; up to 2&nbsp;MB)</span></label>
+        <input type="file" id="avatar_file" name="avatar_file" accept="image/png,image/jpeg,image/gif,image/webp">
+      </fieldset>
+
+      <fieldset>
+        <legend>Signature</legend>
+        <label for="signature">Shown below your posts <span class="hint">(BBCode allowed)</span></label>
+        <textarea id="signature" name="signature" style="min-height: 100px" maxlength="2000">{{ request.form.get('signature', signature) }}</textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Change password</legend>
+        <div class="two-col">
+          {% if current_user.id == user.id and user.password_hash %}
+          <div><label for="current_password">Current password</label><input type="password" id="current_password" name="current_password" autocomplete="current-password"></div>
+          <div></div>
+          {% endif %}
+          <div><label for="new_password">New password</label><input type="password" id="new_password" name="new_password" autocomplete="new-password" minlength="8"></div>
+          <div><label for="confirm_password">Confirm new password</label><input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" minlength="8"></div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions"><button type="submit">Save Profile</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

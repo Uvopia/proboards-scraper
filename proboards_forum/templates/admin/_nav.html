@@ -1,0 +1,8 @@
+<div class="controls">
+  <div style="display: flex; gap: 6px; flex-wrap: wrap">
+    <a class="button {{ 'secondary' if request.endpoint != 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a class="button {{ 'secondary' if request.endpoint != 'admin.settings' }}" href="{{ url_for('admin.settings') }}">Settings</a>
+    <a class="button {{ 'secondary' if request.endpoint not in ('admin.structure', 'admin.edit_board') }}" href="{{ url_for('admin.structure') }}">Categories &amp; Boards</a>
+    <a class="button {{ 'secondary' if request.endpoint not in ('admin.users', 'admin.edit_user') }}" href="{{ url_for('admin.users') }}">Members</a>
+  </div>
+</div>

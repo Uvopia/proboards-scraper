@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import board_table, user_link, csrf with context %}
+{% block content %}
+
+{% if settings.shoutbox_enabled == '1' %}
+<div class="container" id="shoutbox">
+  <div class="title-bar"><h2>Shoutbox</h2></div>
+  <div class="content">
+    <div class="shouts">
+      {% for shout in shouts %}
+      <div class="shout">
+        <span class="when">[{{ shout.created_at | date }}]</span>
+        <strong>{{ user_link(shout.user) }}</strong>: {{ shout.body | render(shout.body_format) }}
+        {% if current_user and (current_user.is_staff or shout.user_id == current_user.id) %}
+        <form class="inline" method="post" action="{{ url_for('forum.delete_shout', shout_id=shout.id) }}">{{ csrf() }}<button class="link" type="submit" title="Delete">&times;</button></form>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="shout">No shouts yet. Say hello!</div>
+      {% endfor %}
+    </div>
+    {% if current_user %}
+    <form class="shout-form" method="post" action="{{ url_for('forum.shout') }}">
+      {{ csrf() }}
+      <input type="text" name="body" maxlength="500" placeholder="Type your shout here…" aria-label="Shout" required>
+      <button type="submit">Shout</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% for category, boards in sections %}
+  {{ board_table(boards, stats, category.name) }}
+{% else %}
+<div class="container">
+  <div class="title-bar"><h2>Welcome</h2></div>
+  <div class="content padded">
+    This forum doesn't have any boards yet.
+    {% if current_user and current_user.is_admin %}<a href="{{ url_for('admin.structure') }}">Create categories and boards</a> in the admin panel.{% endif %}
+  </div>
+</div>
+{% endfor %}
+
+<div class="container info-center">
+  <div class="title-bar"><h2>Info Center</h2></div>
+  <div class="content">
+    <div class="section">
+      <div class="icon">&#x1F4CA;</div>
+      <div>
+        <h4>Forum Statistics</h4>
+        {{ '{:,}'.format(info.total_posts) }} posts in {{ '{:,}'.format(info.total_threads) }} threads by {{ '{:,}'.format(info.total_members) }} members.
+        {% if info.newest_member %}Latest member: {{ user_link(info.newest_member) }}.{% endif %}
+        {% set latest = info.most_recent_post %}
+        {% if latest %}<br>Latest post: <a href="{{ post_url(latest) }}">{{ latest.thread.title }}</a> by {{ user_link(latest.user, latest.guest_name) }} ({{ latest.created_at | date }}){% endif %}
+      </div>
+    </div>
+    <div class="section">
+      <div class="icon">&#x1F465;</div>
+      <div>
+        <h4>Users Online</h4>
+        {{ info.online | length }} member{{ '' if info.online | length == 1 else 's' }} active in the past 15 minutes{{ ':' if info.online }}
+        {% for user in info.online %}<span class="online-dot"></span>{{ user_link(user) }}{{ ', ' if not loop.last }}{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
