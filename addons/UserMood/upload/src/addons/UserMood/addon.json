@@ -1,0 +1,16 @@
+{
+    "legacy_addon_id": "",
+    "title": "User Mood",
+    "description": "Lets members pick a mood from a set of icons and shows it on their profile.",
+    "version_id": 1000070,
+    "version_string": "1.0.0",
+    "dev": "Uvopia",
+    "dev_url": "https://uvopia.net/",
+    "faq_url": "",
+    "support_url": "",
+    "extra_urls": [],
+    "require": {
+        "XF": [2020070, "XenForo 2.2.0+"]
+    },
+    "icon": "fa-smile"
+}

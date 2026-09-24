@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <template type="public" title="usermood_macros" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:macro name="mood_select" arg-user="!">
+	<div class="block-body">
+		<xf:selectrow name="usermood_mood" value="{$user.usermood_mood}"
+			label="{{ phrase('usermood_mood') }}"
+			explain="{{ phrase('usermood_explain') }}">
+			<xf:option value="">{{ phrase('usermood_no_mood') }}</xf:option>
+			<xf:options source="{$user.mood_select_options}" />
+		</xf:selectrow>
+	</div>
+</xf:macro>
+
+<xf:macro name="mood_display" arg-user="!">
+	<xf:if is="$user.mood_info">
+		<xf:css>
+			.usermood
+			{
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				margin-top: 4px;
+				padding: 3px 10px 3px 6px;
+				border-radius: 999px;
+				background: @xf-contentAltBg;
+				border: 1px solid @xf-borderColorLight;
+				font-size: @xf-fontSizeSmall;
+				color: @xf-textColorMuted;
+			}
+			.usermood-icon
+			{
+				font-size: 18px;
+				line-height: 1;
+			}
+			.usermood-label strong
+			{
+				color: @xf-textColor;
+			}
+		</xf:css>
+		<div class="usermood" title="{{ phrase('usermood_mood') }}: {$user.mood_info.label}">
+			<span class="usermood-icon" aria-hidden="true">{$user.mood_info.icon}</span>
+			<span class="usermood-label">{{ phrase('usermood_feeling') }} <strong>{$user.mood_info.label}</strong></span>
+		</div>
+	</xf:if>
+</xf:macro>]]></template>
+</templates>

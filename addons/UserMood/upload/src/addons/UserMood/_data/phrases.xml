@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phrases>
+  <phrase title="usermood_mood" version_id="1000070" version_string="1.0.0"><![CDATA[Mood]]></phrase>
+  <phrase title="usermood_no_mood" version_id="1000070" version_string="1.0.0"><![CDATA[(No mood)]]></phrase>
+  <phrase title="usermood_explain" version_id="1000070" version_string="1.0.0"><![CDATA[Let everyone know how you're feeling. Shown on your profile.]]></phrase>
+  <phrase title="usermood_feeling" version_id="1000070" version_string="1.0.0"><![CDATA[Feeling]]></phrase>
+</phrases>

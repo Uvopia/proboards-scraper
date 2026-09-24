@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template_modifications>
+  <modification type="public" template="account_details" modification_key="usermood_account_details" description="Adds the mood picker to Account details" execute_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[/<xf:submitrow[^>]*\/>/]]></find>
+    <replace><![CDATA[<xf:macro template="usermood_macros" name="mood_select" arg-user="{$xf.visitor}" />
+$0]]></replace>
+  </modification>
+  <modification type="public" template="member_view" modification_key="usermood_member_view" description="Shows the member's mood under their name on the profile" execute_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[/(<h1 class="memberHeader-name"[^>]*>.*?<\/h1>)/s]]></find>
+    <replace><![CDATA[$1
+<xf:macro template="usermood_macros" name="mood_display" arg-user="{$user}" />]]></replace>
+  </modification>
+</template_modifications>
