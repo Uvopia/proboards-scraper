@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phrases>
+  <phrase title="admin_navigation.uvopiaLeaderboards" version_id="1000070" version_string="1.0.0"><![CDATA[Leaderboards]]></phrase>
+  <phrase title="alert_opt_out.uvopia_leaderboard_near" version_id="1000070" version_string="1.0.0"><![CDATA[Getting close to a top 3 spot on a leaderboard]]></phrase>
+  <phrase title="alert_opt_out.uvopia_leaderboard_top" version_id="1000070" version_string="1.0.0"><![CDATA[Reaching a top 3 spot on a leaderboard]]></phrase>
+  <phrase title="uvopia_leaderboards" version_id="1000070" version_string="1.0.0"><![CDATA[Leaderboards]]></phrase>
+  <phrase title="uvopia_leaderboards_add" version_id="1000070" version_string="1.0.0"><![CDATA[Add leaderboard]]></phrase>
+  <phrase title="uvopia_leaderboards_alert_near" version_id="1000070" version_string="1.0.0"><![CDATA[You're <b>#{position}</b> on the {leaderboard} leaderboard ({period}) and closing in on the top 3.]]></phrase>
+  <phrase title="uvopia_leaderboards_alert_top" version_id="1000070" version_string="1.0.0"><![CDATA[You've reached <b>#{position}</b> on the {leaderboard} leaderboard ({period})!]]></phrase>
+  <phrase title="uvopia_leaderboards_alerts" version_id="1000070" version_string="1.0.0"><![CDATA[Alerts]]></phrase>
+  <phrase title="uvopia_leaderboards_alerts_explain" version_id="1000070" version_string="1.0.0"><![CDATA[Alerts members once per period when they reach the top 3 or get close to it, based on this leaderboard's default period. Members can opt out in their alert preferences.]]></phrase>
+  <phrase title="uvopia_leaderboards_cache_minutes" version_id="1000070" version_string="1.0.0"><![CDATA[Cache results for (minutes)]]></phrase>
+  <phrase title="uvopia_leaderboards_cache_minutes_explain" version_id="1000070" version_string="1.0.0"><![CDATA[Rankings are recalculated at most this often. Set to 0 to disable caching (not recommended on large boards).]]></phrase>
+  <phrase title="uvopia_leaderboards_clear_cache" version_id="1000070" version_string="1.0.0"><![CDATA[Clear leaderboard cache]]></phrase>
+  <phrase title="uvopia_leaderboards_clear_cache_explain" version_id="1000070" version_string="1.0.0"><![CDATA[Forces every leaderboard to recalculate on its next view.]]></phrase>
+  <phrase title="uvopia_leaderboards_criteria" version_id="1000070" version_string="1.0.0"><![CDATA[Ranking criteria]]></phrase>
+  <phrase title="uvopia_leaderboards_criteria_explain" version_id="1000070" version_string="1.0.0"><![CDATA[Resources and media are only listed when XenForo Resource Manager or Media Gallery is installed and enabled.]]></phrase>
+  <phrase title="uvopia_leaderboards_criteria_media" version_id="1000070" version_string="1.0.0"><![CDATA[Most media uploaded]]></phrase>
+  <phrase title="uvopia_leaderboards_criteria_messages" version_id="1000070" version_string="1.0.0"><![CDATA[Most messages]]></phrase>
+  <phrase title="uvopia_leaderboards_criteria_reactions" version_id="1000070" version_string="1.0.0"><![CDATA[Highest reaction score]]></phrase>
+  <phrase title="uvopia_leaderboards_criteria_resources" version_id="1000070" version_string="1.0.0"><![CDATA[Most resources]]></phrase>
+  <phrase title="uvopia_leaderboards_criteria_threads" version_id="1000070" version_string="1.0.0"><![CDATA[Most threads started]]></phrase>
+  <phrase title="uvopia_leaderboards_criteria_trophy_points" version_id="1000070" version_string="1.0.0"><![CDATA[Most trophy points (achievements)]]></phrase>
+  <phrase title="uvopia_leaderboards_default_period" version_id="1000070" version_string="1.0.0"><![CDATA[Default period]]></phrase>
+  <phrase title="uvopia_leaderboards_down_x" version_id="1000070" version_string="1.0.0"><![CDATA[Down {count}]]></phrase>
+  <phrase title="uvopia_leaderboards_edit" version_id="1000070" version_string="1.0.0"><![CDATA[Edit leaderboard]]></phrase>
+  <phrase title="uvopia_leaderboards_find_own_position" version_id="1000070" version_string="1.0.0"><![CDATA[Find own position]]></phrase>
+  <phrase title="uvopia_leaderboards_invalid_criteria" version_id="1000070" version_string="1.0.0"><![CDATA[Please choose a valid ranking criteria.]]></phrase>
+  <phrase title="uvopia_leaderboards_last_updated" version_id="1000070" version_string="1.0.0"><![CDATA[Last updated]]></phrase>
+  <phrase title="uvopia_leaderboards_leaderboard" version_id="1000070" version_string="1.0.0"><![CDATA[Leaderboard]]></phrase>
+  <phrase title="uvopia_leaderboards_near_threshold" version_id="1000070" version_string="1.0.0"><![CDATA["Close to the top" range]]></phrase>
+  <phrase title="uvopia_leaderboards_near_threshold_explain" version_id="1000070" version_string="1.0.0"><![CDATA[Members ranked from 4th down to this position receive the "almost there" alert.]]></phrase>
+  <phrase title="uvopia_leaderboards_new_entry" version_id="1000070" version_string="1.0.0"><![CDATA[New]]></phrase>
+  <phrase title="uvopia_leaderboards_no_change" version_id="1000070" version_string="1.0.0"><![CDATA[No change]]></phrase>
+  <phrase title="uvopia_leaderboards_no_entries" version_id="1000070" version_string="1.0.0"><![CDATA[Nobody has placed on this leaderboard for this period yet.]]></phrase>
+  <phrase title="uvopia_leaderboards_none_available" version_id="1000070" version_string="1.0.0"><![CDATA[There are no leaderboards to show yet.]]></phrase>
+  <phrase title="uvopia_leaderboards_not_ranked_yet" version_id="1000070" version_string="1.0.0"><![CDATA[You haven't placed on this leaderboard for this period yet.]]></phrase>
+  <phrase title="uvopia_leaderboards_period" version_id="1000070" version_string="1.0.0"><![CDATA[Time period]]></phrase>
+  <phrase title="uvopia_leaderboards_period_all" version_id="1000070" version_string="1.0.0"><![CDATA[All time]]></phrase>
+  <phrase title="uvopia_leaderboards_period_daily" version_id="1000070" version_string="1.0.0"><![CDATA[Today]]></phrase>
+  <phrase title="uvopia_leaderboards_period_monthly" version_id="1000070" version_string="1.0.0"><![CDATA[This month]]></phrase>
+  <phrase title="uvopia_leaderboards_period_weekly" version_id="1000070" version_string="1.0.0"><![CDATA[This week]]></phrase>
+  <phrase title="uvopia_leaderboards_period_yearly" version_id="1000070" version_string="1.0.0"><![CDATA[This year]]></phrase>
+  <phrase title="uvopia_leaderboards_periods" version_id="1000070" version_string="1.0.0"><![CDATA[Available periods]]></phrase>
+  <phrase title="uvopia_leaderboards_periods_explain" version_id="1000070" version_string="1.0.0"><![CDATA[Periods follow the calendar in the board's default time zone. Weeks start on Monday.]]></phrase>
+  <phrase title="uvopia_leaderboards_requested_leaderboard_not_found" version_id="1000070" version_string="1.0.0"><![CDATA[The requested leaderboard could not be found.]]></phrase>
+  <phrase title="uvopia_leaderboards_select_at_least_one_period" version_id="1000070" version_string="1.0.0"><![CDATA[Please select at least one time period.]]></phrase>
+  <phrase title="uvopia_leaderboards_send_position_alerts" version_id="1000070" version_string="1.0.0"><![CDATA[Send position alerts]]></phrase>
+  <phrase title="uvopia_leaderboards_top_3" version_id="1000070" version_string="1.0.0"><![CDATA[Top 3]]></phrase>
+  <phrase title="uvopia_leaderboards_unit_media" version_id="1000070" version_string="1.0.0"><![CDATA[media]]></phrase>
+  <phrase title="uvopia_leaderboards_unit_messages" version_id="1000070" version_string="1.0.0"><![CDATA[messages]]></phrase>
+  <phrase title="uvopia_leaderboards_unit_reactions" version_id="1000070" version_string="1.0.0"><![CDATA[reaction score]]></phrase>
+  <phrase title="uvopia_leaderboards_unit_resources" version_id="1000070" version_string="1.0.0"><![CDATA[resources]]></phrase>
+  <phrase title="uvopia_leaderboards_unit_threads" version_id="1000070" version_string="1.0.0"><![CDATA[threads]]></phrase>
+  <phrase title="uvopia_leaderboards_unit_trophy_points" version_id="1000070" version_string="1.0.0"><![CDATA[points]]></phrase>
+  <phrase title="uvopia_leaderboards_up_x" version_id="1000070" version_string="1.0.0"><![CDATA[Up {count}]]></phrase>
+  <phrase title="uvopia_leaderboards_use_default_period" version_id="1000070" version_string="1.0.0"><![CDATA[Leaderboard's default]]></phrase>
+  <phrase title="uvopia_leaderboards_user_limit" version_id="1000070" version_string="1.0.0"><![CDATA[Members shown]]></phrase>
+  <phrase title="uvopia_leaderboards_view_full" version_id="1000070" version_string="1.0.0"><![CDATA[View full leaderboard]]></phrase>
+  <phrase title="uvopia_leaderboards_viewing_leaderboards" version_id="1000070" version_string="1.0.0"><![CDATA[Viewing leaderboards]]></phrase>
+  <phrase title="uvopia_leaderboards_widget_limit" version_id="1000070" version_string="1.0.0"><![CDATA[Members to display]]></phrase>
+  <phrase title="uvopia_leaderboards_widget_period_explain" version_id="1000070" version_string="1.0.0"><![CDATA[Falls back to the leaderboard's default if the chosen period isn't enabled for it.]]></phrase>
+  <phrase title="uvopia_leaderboards_you_are_ranked_x" version_id="1000070" version_string="1.0.0"><![CDATA[You're ranked <b>#{position}</b> on {leaderboard} ({period}) with {value} {unit}.]]></phrase>
+  <phrase title="uvopia_leaderboards_your_position" version_id="1000070" version_string="1.0.0"><![CDATA[Your position]]></phrase>
+  <phrase title="cron_entry.uvopiaLeaderboardAlerts" version_id="1000070" version_string="1.0.0"><![CDATA[Leaderboards: send position alerts]]></phrase>
+  <phrase title="nav.uvopiaLeaderboards" version_id="1000070" version_string="1.0.0"><![CDATA[Leaderboards]]></phrase>
+  <phrase title="widget_def.uvopia_leaderboard" version_id="1000070" version_string="1.0.0"><![CDATA[Leaderboard]]></phrase>
+  <phrase title="widget_def_desc.uvopia_leaderboard" version_id="1000070" version_string="1.0.0"><![CDATA[Shows the top members of a leaderboard.]]></phrase>
+</phrases>

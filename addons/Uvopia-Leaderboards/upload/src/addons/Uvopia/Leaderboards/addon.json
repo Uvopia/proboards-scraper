@@ -1,0 +1,17 @@
+{
+    "legacy_addon_id": "",
+    "title": "Leaderboards",
+    "description": "Community leaderboards that rank members by activity across daily, weekly, monthly, yearly and all-time periods, with widgets and position alerts.",
+    "version_id": 1000070,
+    "version_string": "1.0.0",
+    "dev": "Uvopia",
+    "dev_url": "https://uvopia.net/",
+    "faq_url": "",
+    "support_url": "",
+    "extra_urls": [],
+    "require": {
+        "XF": [2020070, "XenForo 2.2.0+"],
+        "php": ["7.4.0", "PHP 7.4.0+"]
+    },
+    "icon": "fa-trophy"
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation>
+  <navigation navigation_id="uvopiaLeaderboards" parent_navigation_id="members" display_order="50" navigation_type_id="basic" enabled="1"><![CDATA[{"link":"{{ link('leaderboards') }}","display_condition":"$xf.visitor.canViewMemberList()","extra_attributes":[]}]]></navigation>
+</navigation>

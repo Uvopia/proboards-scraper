@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<admin_navigation>
+  <navigation navigation_id="uvopiaLeaderboards" parent_navigation_id="users" display_order="1000" link="leaderboards" icon="" admin_permission_id="user" debug_only="0" development_only="0" hide_no_children="0"/>
+</admin_navigation>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cron>
+  <entry entry_id="uvopiaLeaderboardAlerts" cron_class="Uvopia\Leaderboards\Cron\PositionAlerts" cron_method="run" active="1"><![CDATA[{"day_type":"dom","dom":[-1],"hours":[-1],"minutes":[20]}]]></entry>
+</cron>

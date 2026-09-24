@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <template type="admin" title="uvopia_leaderboard_edit" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:if is="$leaderboard.isInsert()">
+	<xf:title>{{ phrase('uvopia_leaderboards_add') }}</xf:title>
+<xf:else />
+	<xf:title>{{ phrase('uvopia_leaderboards_edit') }}: {$leaderboard.title}</xf:title>
+</xf:if>
+
+<xf:if is="$leaderboard.isUpdate()">
+	<xf:pageaction>
+		<xf:button href="{{ link('leaderboards/delete', $leaderboard) }}" icon="delete" overlay="true" />
+	</xf:pageaction>
+</xf:if>
+
+<xf:form action="{{ link('leaderboards/save', $leaderboard) }}" ajax="true" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow name="title" value="{$leaderboard.title}" maxlength="100" label="{{ phrase('title') }}" />
+
+			<xf:selectrow name="criteria" value="{$leaderboard.criteria}" label="{{ phrase('uvopia_leaderboards_criteria') }}"
+				explain="{{ phrase('uvopia_leaderboards_criteria_explain') }}">
+				<xf:foreach loop="$criteria" key="$key" value="$criteriaTitle">
+					<xf:option value="{$key}">{$criteriaTitle}</xf:option>
+				</xf:foreach>
+			</xf:selectrow>
+
+			<xf:checkboxrow label="{{ phrase('uvopia_leaderboards_periods') }}" explain="{{ phrase('uvopia_leaderboards_periods_explain') }}">
+				<xf:foreach loop="$periods" value="$p">
+					<xf:option name="periods[]" value="{$p}" selected="{{ in_array($p, $leaderboard.periods) }}">{{ phrase_dynamic('uvopia_leaderboards_period_' . $p) }}</xf:option>
+				</xf:foreach>
+			</xf:checkboxrow>
+
+			<xf:selectrow name="default_period" value="{$leaderboard.default_period}" label="{{ phrase('uvopia_leaderboards_default_period') }}">
+				<xf:foreach loop="$periods" value="$p">
+					<xf:option value="{$p}">{{ phrase_dynamic('uvopia_leaderboards_period_' . $p) }}</xf:option>
+				</xf:foreach>
+			</xf:selectrow>
+
+			<xf:numberboxrow name="user_limit" value="{$leaderboard.user_limit}" min="1" max="500"
+				label="{{ phrase('uvopia_leaderboards_user_limit') }}" />
+
+			<xf:numberboxrow name="cache_minutes" value="{$leaderboard.cache_minutes}" min="0" max="10080"
+				label="{{ phrase('uvopia_leaderboards_cache_minutes') }}"
+				explain="{{ phrase('uvopia_leaderboards_cache_minutes_explain') }}" />
+
+			<hr class="formRowSep" />
+
+			<xf:checkboxrow label="{{ phrase('uvopia_leaderboards_alerts') }}">
+				<xf:option name="alerts_enabled" selected="$leaderboard.alerts_enabled"
+					hint="{{ phrase('uvopia_leaderboards_alerts_explain') }}">{{ phrase('uvopia_leaderboards_send_position_alerts') }}</xf:option>
+			</xf:checkboxrow>
+
+			<xf:numberboxrow name="near_threshold" value="{$leaderboard.near_threshold}" min="3" max="100"
+				label="{{ phrase('uvopia_leaderboards_near_threshold') }}"
+				explain="{{ phrase('uvopia_leaderboards_near_threshold_explain') }}" />
+
+			<hr class="formRowSep" />
+
+			<xf:numberboxrow name="display_order" value="{$leaderboard.display_order}" min="0"
+				label="{{ phrase('display_order') }}" />
+
+			<xf:checkboxrow>
+				<xf:option name="active" selected="$leaderboard.active">{{ phrase('enabled') }}</xf:option>
+			</xf:checkboxrow>
+		</div>
+		<xf:submitrow sticky="true" icon="save" />
+	</div>
+</xf:form>]]></template>
+  <template type="admin" title="uvopia_leaderboard_list" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:title>{{ phrase('uvopia_leaderboards') }}</xf:title>
+
+<xf:pageaction>
+	<xf:button href="{{ link('leaderboards/add') }}" icon="add">{{ phrase('uvopia_leaderboards_add') }}</xf:button>
+</xf:pageaction>
+
+<xf:if is="$leaderboards is not empty">
+	<xf:form action="{{ link('leaderboards/toggle') }}" class="block" ajax="true">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:foreach loop="$leaderboards" value="$lb">
+						<xf:datarow>
+							<xf:main href="{{ link('leaderboards/edit', $lb) }}" label="{$lb.title}" hint="{$lb.criteria_title}" />
+							<xf:toggle name="active[{$lb.leaderboard_id}]" selected="$lb.active"
+								class="dataList-cell--separated" submit="true"
+								tooltip="{{ phrase('enable_disable_x', {'title': $lb.title}) }}" />
+							<xf:delete href="{{ link('leaderboards/delete', $lb) }}" />
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+		</div>
+	</xf:form>
+
+	<xf:form action="{{ link('leaderboards/clear-cache') }}" class="block">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:formrow explain="{{ phrase('uvopia_leaderboards_clear_cache_explain') }}">
+					<xf:button type="submit" class="button--small">{{ phrase('uvopia_leaderboards_clear_cache') }}</xf:button>
+				</xf:formrow>
+			</div>
+		</div>
+	</xf:form>
+<xf:else />
+	<div class="blockMessage">{{ phrase('no_items_have_been_created_yet') }}</div>
+</xf:if>]]></template>
+  <template type="admin" title="widget_def_options_uvopia_leaderboard" version_id="1000070" version_string="1.0.0"><![CDATA[<hr class="formRowSep" />
+
+<xf:selectrow name="options[leaderboard_id]" value="{$options.leaderboard_id}" label="{{ phrase('uvopia_leaderboards_leaderboard') }}">
+	<xf:foreach loop="$leaderboards" value="$lb">
+		<xf:option value="{$lb.leaderboard_id}">{$lb.title}</xf:option>
+	</xf:foreach>
+</xf:selectrow>
+
+<xf:selectrow name="options[period]" value="{$options.period}" label="{{ phrase('uvopia_leaderboards_period') }}"
+	explain="{{ phrase('uvopia_leaderboards_widget_period_explain') }}">
+	<xf:option value="">{{ phrase('uvopia_leaderboards_use_default_period') }}</xf:option>
+	<xf:foreach loop="$periods" value="$p">
+		<xf:option value="{$p}">{{ phrase_dynamic('uvopia_leaderboards_period_' . $p) }}</xf:option>
+	</xf:foreach>
+</xf:selectrow>
+
+<xf:numberboxrow name="options[limit]" value="{$options.limit}" min="1" max="50"
+	label="{{ phrase('uvopia_leaderboards_widget_limit') }}" />]]></template>
+  <template type="public" title="alert_uvopia_leaderboard_near" version_id="1000070" version_string="1.0.0"><![CDATA[{{ phrase('uvopia_leaderboards_alert_near', {
+	'position': $extra.position,
+	'leaderboard': '<a href="' . link('leaderboards', $content, {'period': $extra.period}) . '" class="fauxBlockLink-blockLink">' . $content.title . '</a>',
+	'period': phrase_dynamic('uvopia_leaderboards_period_' . $extra.period)
+}) }}]]></template>
+  <template type="public" title="alert_uvopia_leaderboard_top" version_id="1000070" version_string="1.0.0"><![CDATA[{{ phrase('uvopia_leaderboards_alert_top', {
+	'position': $extra.position,
+	'leaderboard': '<a href="' . link('leaderboards', $content, {'period': $extra.period}) . '" class="fauxBlockLink-blockLink">' . $content.title . '</a>',
+	'period': phrase_dynamic('uvopia_leaderboards_period_' . $extra.period)
+}) }}]]></template>
+  <template type="public" title="uvopia_leaderboard_position" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:title>{{ phrase('uvopia_leaderboards_your_position') }}</xf:title>
+
+<div class="block">
+	<div class="block-container">
+		<div class="block-body block-row">
+			<xf:if is="$position">
+				{{ phrase('uvopia_leaderboards_you_are_ranked_x', {
+					'position': $position|number,
+					'value': $value|number,
+					'unit': $leaderboard.unit_phrase,
+					'leaderboard': $leaderboard.title,
+					'period': phrase_dynamic('uvopia_leaderboards_period_' . $period)
+				}) }}
+			<xf:else />
+				{{ phrase('uvopia_leaderboards_not_ranked_yet') }}
+			</xf:if>
+		</div>
+	</div>
+</div>]]></template>
+  <template type="public" title="uvopia_leaderboard_view" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:title>{{ $leaderboard ? $leaderboard.title : phrase('uvopia_leaderboards') }}</xf:title>
+<xf:breadcrumb href="{{ link('leaderboards') }}">{{ phrase('uvopia_leaderboards') }}</xf:breadcrumb>
+<xf:css src="uvopia_leaderboards.less" />
+
+<xf:if is="!$leaderboard">
+	<div class="blockMessage">{{ phrase('uvopia_leaderboards_none_available') }}</div>
+<xf:else />
+
+	<xf:if is="$leaderboards.count() > 1">
+		<div class="tabs tabs--standalone">
+			<div class="hScroller" data-xf-init="h-scroller">
+				<span class="hScroller-scroll">
+					<xf:foreach loop="$leaderboards" value="$lb">
+						<a href="{{ link('leaderboards', $lb) }}" class="tabs-tab {{ $lb.leaderboard_id == $leaderboard.leaderboard_id ? 'is-active' : '' }}">{$lb.title}</a>
+					</xf:foreach>
+				</span>
+			</div>
+		</div>
+	</xf:if>
+
+	<div class="block uvopiaLb">
+		<div class="block-container">
+			<xf:if is="count($leaderboard.periods) > 1">
+				<h2 class="block-tabHeader tabs hScroller" data-xf-init="h-scroller">
+					<span class="hScroller-scroll">
+						<xf:foreach loop="$leaderboard.periods" value="$p">
+							<a href="{{ link('leaderboards', $leaderboard, {'period': $p}) }}" class="tabs-tab {{ $p == $period ? 'is-active' : '' }}">{{ phrase_dynamic('uvopia_leaderboards_period_' . $p) }}</a>
+						</xf:foreach>
+					</span>
+				</h2>
+			</xf:if>
+
+			<xf:if is="$entries is not empty">
+				<ol class="block-body listPlain uvopiaLb-list">
+					<xf:foreach loop="$entries" value="$entry">
+						<li class="block-row block-row--separated uvopiaLb-row {{ $entry.position <= 3 ? 'uvopiaLb-row--podium' : '' }} {{ $entry.user_id == $xf.visitor.user_id ? 'is-self' : '' }}" id="lb-user-{$entry.user_id}">
+							<div class="contentRow contentRow--alignMiddle">
+								<div class="contentRow-figure uvopiaLb-rank">
+									<xf:if is="$entry.position <= 3">
+										<span class="uvopiaLb-medal uvopiaLb-medal--{$entry.position}" title="{{ phrase('uvopia_leaderboards_top_3')|for_attr }}"><xf:fa icon="fa-trophy" /></span>
+									</xf:if>
+									<span class="uvopiaLb-rankNum">{$entry.position}</span>
+								</div>
+								<div class="contentRow-figure">
+									<xf:avatar user="$entry.user" size="s" />
+								</div>
+								<div class="contentRow-main">
+									<div class="contentRow-extra uvopiaLb-score">
+										<span class="uvopiaLb-value">{$entry.value|number}</span>
+										<span class="uvopiaLb-unit">{$leaderboard.unit_phrase}</span>
+									</div>
+									<h3 class="contentRow-header"><xf:username user="$entry.user" rich="true" /></h3>
+									<div class="contentRow-minor">
+										<xf:if is="$entry.change_type == 'up'">
+											<span class="uvopiaLb-change uvopiaLb-change--up"><xf:fa icon="fa-arrow-up" /> {{ phrase('uvopia_leaderboards_up_x', {'count': $entry.change_abs}) }}</span>
+										<xf:elseif is="$entry.change_type == 'down'" />
+											<span class="uvopiaLb-change uvopiaLb-change--down"><xf:fa icon="fa-arrow-down" /> {{ phrase('uvopia_leaderboards_down_x', {'count': $entry.change_abs}) }}</span>
+										<xf:elseif is="$entry.change_type == 'new'" />
+											<span class="uvopiaLb-change uvopiaLb-change--new">{{ phrase('uvopia_leaderboards_new_entry') }}</span>
+										<xf:elseif is="$entry.change_type == 'same'" />
+											<span class="uvopiaLb-change uvopiaLb-change--same">{{ phrase('uvopia_leaderboards_no_change') }}</span>
+										</xf:if>
+									</div>
+								</div>
+							</div>
+						</li>
+					</xf:foreach>
+				</ol>
+			<xf:else />
+				<div class="block-body block-row">{{ phrase('uvopia_leaderboards_no_entries') }}</div>
+			</xf:if>
+
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ phrase('uvopia_leaderboards_last_updated') }} <xf:date time="{$generated}" /></span>
+				<xf:if is="$xf.visitor.user_id">
+					<xf:if is="$selfEntry">
+						<a href="#lb-user-{$xf.visitor.user_id}" class="button button--small"><xf:fa icon="fa-crosshairs" /> {{ phrase('uvopia_leaderboards_find_own_position') }} (#{$selfEntry.position})</a>
+					<xf:else />
+						<a href="{{ link('leaderboards/position', $leaderboard, {'period': $period}) }}" class="button button--small" data-xf-click="overlay"><xf:fa icon="fa-crosshairs" /> {{ phrase('uvopia_leaderboards_find_own_position') }}</a>
+					</xf:if>
+				</xf:if>
+			</div>
+		</div>
+	</div>
+</xf:if>]]></template>
+  <template type="public" title="uvopia_leaderboards.less" version_id="1000070" version_string="1.0.0"><![CDATA[.uvopiaLb-rank
+{
+	width: 44px;
+	text-align: center;
+	font-weight: @xf-fontWeightHeavy;
+	font-size: @xf-fontSizeLarger;
+	color: @xf-textColorMuted;
+
+	&.uvopiaLb-rank--small
+	{
+		width: 24px;
+		font-size: @xf-fontSizeNormal;
+	}
+}
+
+.uvopiaLb-medal
+{
+	display: block;
+	font-size: 1.1em;
+	line-height: 1.2;
+
+	&.uvopiaLb-medal--1 { color: #d4a017; }
+	&.uvopiaLb-medal--2 { color: #9ea3a8; }
+	&.uvopiaLb-medal--3 { color: #cd7f32; }
+}
+
+.uvopiaLb-row--podium .uvopiaLb-rankNum
+{
+	color: @xf-textColor;
+}
+
+.uvopiaLb-row.is-self,
+.uvopiaLb-row:target
+{
+	background: @xf-contentHighlightBg;
+}
+
+.uvopiaLb-row:target
+{
+	box-shadow: inset 3px 0 0 @xf-textColorAttention;
+	scroll-margin-top: 80px;
+}
+
+.uvopiaLb-score
+{
+	text-align: right;
+}
+
+.uvopiaLb-value
+{
+	display: block;
+	font-size: @xf-fontSizeLarger;
+	font-weight: @xf-fontWeightHeavy;
+}
+
+.uvopiaLb-unit
+{
+	font-size: @xf-fontSizeSmaller;
+	color: @xf-textColorMuted;
+}
+
+.uvopiaLb-change
+{
+	font-size: @xf-fontSizeSmaller;
+
+	&.uvopiaLb-change--up { color: #2e7d32; }
+	&.uvopiaLb-change--down { color: #c62828; }
+	&.uvopiaLb-change--new { color: @xf-textColorFeature; }
+	&.uvopiaLb-change--same { color: @xf-textColorMuted; }
+}]]></template>
+  <template type="public" title="widget_uvopia_leaderboard" version_id="1000070" version_string="1.0.0"><![CDATA[<xf:css src="uvopia_leaderboards.less" />
+
+<div class="block uvopiaLb uvopiaLb--widget" {{ widget_data($widget) }}>
+	<div class="block-container">
+		<h3 class="block-minorHeader">
+			<a href="{{ link('leaderboards', $leaderboard, {'period': $period}) }}">{$title}</a>
+		</h3>
+		<xf:if is="$entries is not empty">
+			<ul class="block-body listPlain">
+				<xf:foreach loop="$entries" value="$entry">
+					<li class="block-row uvopiaLb-row {{ $entry.user_id == $xf.visitor.user_id ? 'is-self' : '' }}">
+						<div class="contentRow contentRow--alignMiddle">
+							<div class="contentRow-figure uvopiaLb-rank uvopiaLb-rank--small">
+								<xf:if is="$entry.position <= 3">
+									<span class="uvopiaLb-medal uvopiaLb-medal--{$entry.position}"><xf:fa icon="fa-trophy" /></span>
+								<xf:else />
+									<span class="uvopiaLb-rankNum">{$entry.position}</span>
+								</xf:if>
+							</div>
+							<div class="contentRow-figure">
+								<xf:avatar user="$entry.user" size="xxs" />
+							</div>
+							<div class="contentRow-main contentRow-main--close">
+								<xf:username user="$entry.user" rich="true" />
+								<div class="contentRow-minor">{$entry.value|number} {$leaderboard.unit_phrase}</div>
+							</div>
+						</div>
+					</li>
+				</xf:foreach>
+			</ul>
+			<div class="block-footer">
+				<span class="block-footer-controls">
+					<a href="{{ link('leaderboards', $leaderboard, {'period': $period}) }}">{{ phrase('uvopia_leaderboards_view_full') }}</a>
+				</span>
+			</div>
+		<xf:else />
+			<div class="block-body block-row">{{ phrase('uvopia_leaderboards_no_entries') }}</div>
+		</xf:if>
+	</div>
+</div>]]></template>
+</templates>

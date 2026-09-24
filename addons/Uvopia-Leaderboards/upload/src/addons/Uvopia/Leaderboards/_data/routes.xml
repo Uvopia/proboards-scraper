@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<routes>
+  <route route_type="admin" route_prefix="leaderboards" format=":int&lt;leaderboard_id,title&gt;/" controller="Uvopia\Leaderboards\Admin\Controller\LeaderboardController" context="uvopiaLeaderboards"/>
+  <route route_type="public" route_prefix="leaderboards" format=":int&lt;leaderboard_id,title&gt;/" controller="Uvopia\Leaderboards\Pub\Controller\LeaderboardController" context="members"/>
+</routes>
