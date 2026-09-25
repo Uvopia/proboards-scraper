@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style title="Blue Rays" description="Blue ray header, silver tabs and pale blue rows. A port of a classic 2011 phpBB look." enable_variations="1" user_selectable="1" base_version_id="2030470" export_version="2">
+  <assets />
+  <templates>
+    <template title="extra.less" type="public" addon_id="XF" version_id="2030470" version_string="2.3.4"><![CDATA[/* =============================================================================
+   Blue Rays — a XenForo 2.3 port of a 2011 phpBB "Orbit"/proSilver board look:
+   dark-blue ray header, silver tab bar with a navy active tab, pale-blue page,
+   navy category bars, gradient forum rows with boxed stats, blue footer.
+   All drawn with CSS (no images) so it stays sharp and needs no uploads.
+
+   Light and dark: every colour below comes from a --br-* variable. The light set is
+   on :root; the dark set is applied the same way XenForo 2.3 applies its own
+   "alternate" variation — when the member picks Dark, or picks System and their
+   device is in dark mode.
+   ============================================================================= */
+
+// ---- Colour variables ---------------------------------------------------------
+
+:root
+{
+	// Tab bar
+	--br-nav-bg: linear-gradient(180deg, #ffffff 0%, #f7f7f7 55%, #e4e7ea 100%);
+	--br-nav-border: #b7c6d4;
+	--br-nav-highlight: rgba(255, 255, 255, .6);
+	--br-nav-text: #343434;
+	--br-nav-text-shadow: 0 1px 1px #fff;
+	--br-nav-arrow: #6f8aa3;
+	--br-nav-divider: #d3d9df;
+	--br-nav-divider-light: #fff;
+	--br-nav-hover-bg: rgba(255, 255, 255, .8);
+
+	// Page and blocks
+	--br-body-column: linear-gradient(180deg, #e7f4fa 0%, #f6fbfd 110px, #ffffff 217px);
+	--br-body-shadow: 0 0 14px rgba(10, 90, 151, .10);
+	--br-subnav-bg: #ffffff;
+	--br-border: #b9d5ef;
+	--br-link: #0a5a97;
+	--br-link-hover: #128dea;
+	--br-heading: #0f365a;
+	--br-text-dim: #4c5d77;
+	--br-stat-label: #116fb8;
+	--br-block-footer-bg: #eef4fa;
+	--br-minor-header-bg: linear-gradient(180deg, #f5f9fc 0%, #e0ebf6 100%);
+
+	// Category bars
+	--br-cat-bg: linear-gradient(180deg, #1c3750 0px, #176198 1px, #19507d 50%, #123f65 100%);
+	--br-cat-border: #0d2e4a;
+
+	// Forum / thread rows
+	--br-row-bg: linear-gradient(180deg, #ffffff 0%, #fbfcfe 25%, #f5f9fc 50%, #eef4fa 75%, #e0ebf6 100%);
+	--br-struct-bg: linear-gradient(180deg, #ffffff 0%, #f5f9fc 60%, #eef4fa 100%);
+	--br-stat-bg: #ffffff;
+	--br-stat-number: #0e2c3e;
+	--br-stat-shadow: 0 1px 1px rgba(10, 90, 151, .08);
+	--br-lastpost-bg: rgba(185, 213, 239, .22);
+	--br-lastpost-divider: #ffffff;
+	--br-user-cell-bg: linear-gradient(180deg, #f1f7fc 0%, #e7f1f9 100%);
+}
+
+// Dark values. Header, active tab, category bars' blue and footer stay the same in both.
+.m-brDark()
+{
+	--br-nav-bg: linear-gradient(180deg, #243344 0%, #1b2836 55%, #141e29 100%);
+	--br-nav-border: #0b131b;
+	--br-nav-highlight: rgba(255, 255, 255, .06);
+	--br-nav-text: #d3dde7;
+	--br-nav-text-shadow: 0 -1px 0 rgba(0, 0, 0, .6);
+	--br-nav-arrow: #6f9cc4;
+	--br-nav-divider: #0e1822;
+	--br-nav-divider-light: rgba(255, 255, 255, .05);
+	--br-nav-hover-bg: rgba(255, 255, 255, .06);
+
+	--br-body-column: linear-gradient(180deg, #0e1824 0%, #122030 110px, #152231 217px);
+	--br-body-shadow: 0 0 14px rgba(0, 0, 0, .35);
+	--br-subnav-bg: #152231;
+	--br-border: #2a4058;
+	--br-link: #6bb8f2;
+	--br-link-hover: #9fd2ff;
+	--br-heading: #cfe3f5;
+	--br-text-dim: #a9bdd1;
+	--br-stat-label: #6bb8f2;
+	--br-block-footer-bg: #122030;
+	--br-minor-header-bg: linear-gradient(180deg, #1f3349 0%, #172839 100%);
+
+	--br-cat-bg: linear-gradient(180deg, #06121e 0px, #11406a 1px, #0e3456 50%, #0a2640 100%);
+	--br-cat-border: #06121e;
+
+	--br-row-bg: linear-gradient(180deg, #1a2b3d 0%, #172738 50%, #132131 100%);
+	--br-struct-bg: linear-gradient(180deg, #192a3c 0%, #152434 60%, #132131 100%);
+	--br-stat-bg: #0f1b28;
+	--br-stat-number: #e3eef8;
+	--br-stat-shadow: none;
+	--br-lastpost-bg: rgba(0, 0, 0, .18);
+	--br-lastpost-divider: #22364b;
+	--br-user-cell-bg: linear-gradient(180deg, #1a2a3c 0%, #16263a 100%);
+}
+
+:root[data-variation="alternate"]
+{
+	.m-brDark();
+}
+
+@media (prefers-color-scheme: dark)
+{
+	:root:not([data-variation])
+	{
+		.m-brDark();
+	}
+}
+
+// ---- Header: deep blue gradient with light rays (same in light and dark) ------
+
+.p-header
+{
+	background-color: #0960a3;
+	background-image:
+		radial-gradient(ellipse 55% 140% at 50% -10%, rgba(125, 195, 255, .38) 0%, rgba(125, 195, 255, 0) 70%),
+		repeating-conic-gradient(from 180deg at 50% -60%, rgba(255, 255, 255, .035) 0deg 2.5deg, rgba(255, 255, 255, 0) 2.5deg 8deg),
+		linear-gradient(180deg, #112338 0%, #0f3151 25%, #0d416c 50%, #0b548e 75%, #0960a3 100%);
+	color: #fff;
+}
+
+.p-header-content
+{
+	min-height: 110px;
+}
+
+// ---- Navigation: silver (dark: steel) tab bar, navy selected tab ----------------
+
+.p-nav
+{
+	background: var(--br-nav-bg);
+	border-top: 1px solid var(--br-nav-highlight);
+	border-bottom: 1px solid var(--br-nav-border);
+	box-shadow: 0 2px 4px rgba(4, 43, 73, .12);
+	color: var(--br-nav-text);
+}
+
+.p-nav-list .p-navEl
+{
+	border-right: 1px solid var(--br-nav-divider);
+	box-shadow: 1px 0 0 var(--br-nav-divider-light);
+}
+
+.p-nav-list .p-navEl-link
+{
+	color: var(--br-nav-text);
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	text-shadow: var(--br-nav-text-shadow);
+
+	&::before
+	{
+		content: "\203A"; // ›
+		display: inline-block;
+		margin-right: 7px;
+		color: var(--br-nav-arrow);
+		font-weight: 700;
+	}
+
+	&:hover
+	{
+		color: var(--br-link);
+		text-decoration: none;
+	}
+}
+
+.p-nav-list .p-navEl:hover
+{
+	background: var(--br-nav-hover-bg);
+}
+
+.p-nav-list .p-navEl.is-selected
+{
+	background: linear-gradient(180deg, #14507f 0%, #0e3a62 55%, #0d3458 100%);
+	border-right-color: #0a2a47;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15);
+
+	.p-navEl-link,
+	.p-navEl-splitTrigger
+	{
+		color: #fff;
+		text-shadow: 0 -1px 0 #061420;
+
+		&::before
+		{
+			color: #9cc8ec;
+		}
+	}
+}
+
+// Log in / Register / account / search on the right of the tab bar
+.p-nav .p-navgroup
+{
+	background: transparent;
+}
+
+.p-nav .p-navgroup-link
+{
+	color: var(--br-nav-text);
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	text-shadow: var(--br-nav-text-shadow);
+	border-left: 1px solid var(--br-nav-divider);
+	box-shadow: inset 1px 0 0 var(--br-nav-divider-light);
+
+	&:hover
+	{
+		background: var(--br-nav-hover-bg);
+		color: var(--br-link);
+		text-decoration: none;
+	}
+}
+
+// Sub-navigation under the tabs
+.p-sectionLinks
+{
+	background: var(--br-subnav-bg);
+	border-bottom: 1px solid var(--br-border);
+	color: var(--br-text-dim);
+
+	a
+	{
+		color: var(--br-link);
+	}
+}
+
+// ---- Page: pale blue with a white content column fading in at the top ---------
+
+.p-body-inner
+{
+	background: var(--br-body-column);
+	box-shadow: var(--br-body-shadow);
+	padding-top: 12px;
+	padding-bottom: 12px;
+}
+
+@media (max-width: @xf-responsiveWide)
+{
+	.p-body-inner
+	{
+		box-shadow: none;
+	}
+}
+
+// ---- Blocks ------------------------------------------------------------------
+
+.block-container
+{
+	border-color: var(--br-border);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+// Navy category / block title bars
+.block-header
+{
+	background: var(--br-cat-bg);
+	border-bottom: 1px solid var(--br-cat-border);
+	color: #fff;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	text-shadow: 0 -1px 0 #061420;
+
+	a,
+	a:hover
+	{
+		color: #fff;
+	}
+
+	.block-desc
+	{
+		color: rgba(255, 255, 255, .75);
+		text-shadow: none;
+	}
+}
+
+// Light blue minor headers ("Members online", "Forum statistics"…)
+.block-minorHeader
+{
+	background: var(--br-minor-header-bg);
+	border-bottom: 1px solid var(--br-border);
+	color: var(--br-heading);
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: 700;
+
+	a
+	{
+		color: var(--br-heading);
+	}
+}
+
+.block-footer
+{
+	background: var(--br-block-footer-bg);
+	border-top-color: var(--br-border);
+}
+
+// ---- Forum list rows --------------------------------------------------------
+
+.node + .node
+{
+	border-top: 1px solid var(--br-border);
+}
+
+.node-body
+{
+	background: var(--br-row-bg);
+}
+
+.node-title a
+{
+	color: var(--br-heading);
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: 700;
+
+	&:hover
+	{
+		color: var(--br-link-hover);
+	}
+}
+
+.node-description
+{
+	color: var(--br-text-dim);
+}
+
+// Square navy forum icons (brighter blue when there are unread posts)
+.node-icon i
+{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 4px;
+	background: linear-gradient(180deg, #245f8f 0%, #0d3458 100%);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 2px rgba(4, 43, 73, .3);
+	color: #cfe3f5;
+	font-size: 20px;
+}
+
+.node--unread .node-icon i
+{
+	background: linear-gradient(180deg, #2ea3f5 0%, #0a5a97 100%);
+	color: #fff;
+}
+
+// Topics / Posts shown as boxes with the number on top
+.node-stats
+{
+	> dl.pairs
+	{
+		display: inline-flex;
+		flex-direction: column-reverse;
+		align-items: center;
+		min-width: 58px;
+		margin: 0 2px;
+		padding: 4px 6px;
+		background: var(--br-stat-bg);
+		border: 1px solid var(--br-border);
+		border-radius: 4px;
+		box-shadow: var(--br-stat-shadow);
+
+		dt
+		{
+			color: var(--br-stat-label);
+			font-size: 11px;
+			font-weight: 700;
+		}
+
+		dd
+		{
+			color: var(--br-stat-number);
+			font-size: 14px;
+			font-weight: 700;
+		}
+	}
+}
+
+// Last post column on a slightly darker tint
+.node-extra
+{
+	background: var(--br-lastpost-bg);
+	border-left: 1px solid var(--br-lastpost-divider);
+	align-self: stretch;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+// ---- Thread list ------------------------------------------------------------
+
+.structItem
+{
+	background: var(--br-struct-bg);
+	border-top-color: var(--br-border);
+}
+
+.structItem-title a
+{
+	color: var(--br-heading);
+	font-weight: 700;
+
+	&:hover
+	{
+		color: var(--br-link-hover);
+	}
+}
+
+.structItem-cell--meta
+{
+	color: var(--br-stat-label);
+}
+
+// ---- Posts ------------------------------------------------------------------
+
+.message
+{
+	border-color: var(--br-border);
+}
+
+.message-cell--user
+{
+	background: var(--br-user-cell-bg);
+	border-right-color: var(--br-border);
+}
+
+.message-name a
+{
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+// ---- Tabs and menu headers: readable text on the pale-blue bars ----------------
+// XenForo colours these with the heading text colour, which is white here (it is meant
+// for the navy bars). Give them their own matching text and background colours so
+// unselected tabs ("Bookmarks", profile tabs, etc.) never end up white on pale blue.
+
+.menu-tabHeader,
+.block-tabHeader,
+.tabs--standalone
+{
+	background: var(--br-minor-header-bg);
+	border-bottom: 1px solid var(--br-border);
+	color: var(--br-text-dim);
+
+	.tabs-tab
+	{
+		color: var(--br-text-dim);
+		text-shadow: none;
+
+		&:hover
+		{
+			color: var(--br-link-hover);
+		}
+
+		&.is-active
+		{
+			color: var(--br-link);
+			border-color: var(--br-link);
+		}
+	}
+}
+
+// Popup menu titles ("Alerts", "Direct messages"...)
+.menu-header
+{
+	background: var(--br-minor-header-bg);
+	border-bottom: 1px solid var(--br-border);
+	color: var(--br-heading);
+	text-shadow: none;
+
+	a
+	{
+		color: var(--br-heading);
+	}
+}
+
+// Overlay and mobile-menu title bars: navy with white text, set together
+.overlay-title,
+.offCanvasMenu-header
+{
+	background: linear-gradient(180deg, #176198 0%, #19507d 50%, #123f65 100%);
+	color: #fff;
+	text-shadow: 0 -1px 0 #061420;
+
+	a,
+	.overlay-titleCloser,
+	.offCanvasMenu-closer
+	{
+		color: #fff;
+	}
+}
+
+// ---- Buttons (same in light and dark) --------------------------------------------
+
+.button.button--primary,
+a.button.button--primary
+{
+	background: linear-gradient(180deg, #1b78bd 0%, #0a5a97 100%);
+	border: 1px solid #084a7c;
+	color: #fff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, .25);
+
+	&:hover
+	{
+		background: linear-gradient(180deg, #2a8fd8 0%, #0d68ad 100%);
+		color: #fff;
+	}
+}
+
+// ---- Footer: blue gradient with a soft ray glow (same in light and dark) -------
+
+.p-footer
+{
+	background-color: #095e9d;
+	background-image:
+		radial-gradient(ellipse 50% 160% at 50% 0%, rgba(125, 195, 255, .25) 0%, rgba(125, 195, 255, 0) 70%),
+		linear-gradient(180deg, #11243a 0%, #0f304f 25%, #0d426d 50%, #0b538a 75%, #095e9d 100%);
+	color: #fff;
+	text-shadow: 0 1px 1px #000;
+
+	a,
+	.p-footer-linkList a
+	{
+		color: #fff;
+
+		&:hover
+		{
+			color: #cfe8ff;
+			text-decoration: underline;
+		}
+	}
+
+	.p-footer-copyright
+	{
+		color: rgba(255, 255, 255, .75);
+	}
+}
+]]></template>
+  </templates>
+  <properties>
+    <property property_name="paletteColor1" group_name="palette" title="Color 1" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1000" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#e7f4fa",
+    "alternate": "#13263a"
+}</value>
+    </property>
+    <property property_name="paletteColor2" group_name="palette" title="Color 2" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1100" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#b9d5ef",
+    "alternate": "#1f3a57"
+}</value>
+    </property>
+    <property property_name="paletteColor3" group_name="palette" title="Color 3" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1200" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#128dea",
+    "alternate": "#3d8fd1"
+}</value>
+    </property>
+    <property property_name="paletteColor4" group_name="palette" title="Color 4" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1300" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#0a5a97",
+    "alternate": "#6bb8f2"
+}</value>
+    </property>
+    <property property_name="paletteColor5" group_name="palette" title="Color 5" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1400" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#0d3458",
+    "alternate": "#cfe3f5"
+}</value>
+    </property>
+    <property property_name="paletteAccent1" group_name="palette" title="Accent 1" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="accent" display_order="2000" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#1b86d6",
+    "alternate": "#3d9be0"
+}</value>
+    </property>
+    <property property_name="paletteNeutral3" group_name="palette" title="Neutral 3" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="neutral" display_order="3200" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#232c33",
+    "alternate": "#e6edf4"
+}</value>
+    </property>
+    <property property_name="pageBg" group_name="color" title="Page background color" description="The background of the page itself, on which all other content rests" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="contentBackground" display_order="2100" addon_id="XF">
+      <value>{
+    "default": "#e7f4fa",
+    "alternate": "#0e1824"
+}</value>
+    </property>
+    <property property_name="contentBg" group_name="color" title="Content background color" description="Most normal content will sit on this background" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="contentBackground" display_order="2000" addon_id="XF">
+      <value>{
+    "default": "#ffffff",
+    "alternate": "#152231"
+}</value>
+    </property>
+    <property property_name="contentAltBg" group_name="color" title="Alternate content background color" description="In order to differentiate it, some content will be presented on this alternate background" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="contentBackground" display_order="2200" addon_id="XF">
+      <value>{
+    "default": "#f1f7fc",
+    "alternate": "#1a2a3c"
+}</value>
+    </property>
+    <property property_name="contentHighlightBg" group_name="color" title="Highlighted content background color" description="When the standard background color is highlighted or selected, it will use this color" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="contentBackground" display_order="2300" addon_id="XF">
+      <value>{
+    "default": "#e7f4fa",
+    "alternate": "#13263a"
+}</value>
+    </property>
+    <property property_name="textColor" group_name="color" title="Text color" description="Unless otherwise specified, text will be this color" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="textBasic" display_order="100" addon_id="XF">
+      <value>{
+    "default": "#232c33",
+    "alternate": "#d7e3ef"
+}</value>
+    </property>
+    <property property_name="textColorDimmed" group_name="color" title="Dimmed text color" description="Used when less-important text is placed next to normal text" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="textBasic" display_order="200" addon_id="XF">
+      <value>{
+    "default": "#4c5d77",
+    "alternate": "#a9bdd1"
+}</value>
+    </property>
+    <property property_name="textColorMuted" group_name="color" title="Muted text color" description="Text is further de-emphasised using this style" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="textBasic" display_order="300" addon_id="XF">
+      <value>{
+    "default": "#6b7f99",
+    "alternate": "#7f97ae"
+}</value>
+    </property>
+    <property property_name="linkColor" group_name="color" title="Link color" description="Basic hyperlinks on standard background colors will use this style" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="links" display_order="1000" addon_id="XF">
+      <value>{
+    "default": "#0a5a97",
+    "alternate": "#6bb8f2"
+}</value>
+    </property>
+    <property property_name="linkHoverColor" group_name="color" title="Link hover color" description="Basic hyperlinks will turn this color when hovered" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="links" display_order="1100" addon_id="XF">
+      <value>{
+    "default": "#128dea",
+    "alternate": "#9fd2ff"
+}</value>
+    </property>
+    <property property_name="borderColor" group_name="color" title="Border color" description="Structural borders around blocks of content generally use this color" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="borderBasic" display_order="4000" addon_id="XF">
+      <value>{
+    "default": "#b9d5ef",
+    "alternate": "#2a4058"
+}</value>
+    </property>
+    <property property_name="borderColorLight" group_name="color" title="Light border color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="borderBasic" display_order="4200" addon_id="XF">
+      <value>{
+    "default": "#d4e5f4",
+    "alternate": "#22364b"
+}</value>
+    </property>
+    <property property_name="borderColorFaint" group_name="color" title="Faint border color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="borderBasic" display_order="4100" addon_id="XF">
+      <value>{
+    "default": "#e7f0f8",
+    "alternate": "#1b2c3e"
+}</value>
+    </property>
+    <property property_name="majorHeadingBg" group_name="color" title="Major heading background color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="heading" display_order="6100" addon_id="XF">
+      <value>{
+    "default": "#176198",
+    "alternate": "#0e3456"
+}</value>
+    </property>
+    <property property_name="majorHeadingTextColor" group_name="color" title="Major heading text color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="heading" display_order="6200" addon_id="XF">
+      <value>{
+    "default": "#ffffff",
+    "alternate": "#ffffff"
+}</value>
+    </property>
+    <property property_name="minorHeadingTextColor" group_name="color" title="Minor heading text color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="heading" display_order="6400" addon_id="XF">
+      <value>{
+    "default": "#0f365a",
+    "alternate": "#cfe3f5"
+}</value>
+    </property>
+    <property property_name="chromeBg" group_name="color" title="Page chrome background color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="chrome" display_order="6000" addon_id="XF">
+      <value>{
+    "default": "#0960a3",
+    "alternate": "#0a1f33"
+}</value>
+    </property>
+    <property property_name="chromeTextColor" group_name="color" title="Page chrome text color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="chrome" display_order="6050" addon_id="XF">
+      <value>{
+    "default": "#ffffff",
+    "alternate": "#ffffff"
+}</value>
+    </property>
+    <property property_name="metaThemeColor" group_name="misc" title="Meta theme color" description="This sets the theme color used for PWA installations, as well as the address bar color on Chrome for Android." property_type="value" value_type="color" has_variations="1" depends_on="" value_group="" display_order="900" addon_id="XF">
+      <value>{
+    "default": "#0960a3",
+    "alternate": "#0a1f33"
+}</value>
+    </property>
+    <property property_name="publicHeaderAdjustColor" group_name="headerNav" title="Header adjustment color" description="The color of the header background is adjusted to be used as the background for the inbox and alerts area in the header" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="header" display_order="100" addon_id="XF">
+      <value>{
+    "default": "rgba(13, 52, 88, 0.06)",
+    "alternate": "rgba(255, 255, 255, 0.06)"
+}</value>
+    </property>
+    <property property_name="nodeIconReadColor" group_name="nodeList" title="Read node icon color" description="When the content within a node has been read, its icon will revert to a less attention-grabbing color, defined here" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="" display_order="200" addon_id="XF">
+      <value>{
+    "default": "#cfe3f5",
+    "alternate": "#cfe3f5"
+}</value>
+    </property>
+    <property property_name="nodeIconUnreadColor" group_name="nodeList" title="Unread node icon color" description="Node icons give an at-a-glance indication of whether or not the content housed within the node has been read. The unread icon color should stand out from its background for quick identification" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="" display_order="100" addon_id="XF">
+      <value>{
+    "default": "#ffffff",
+    "alternate": "#ffffff"
+}</value>
+    </property>
+    <property property_name="buttonBg" group_name="color" title="Default button background color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="buttons" display_order="8200" addon_id="XF">
+      <value>{
+    "default": "#0a5a97",
+    "alternate": "#1b78bd"
+}</value>
+    </property>
+    <property property_name="buttonTextColor" group_name="color" title="Default button text color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="buttons" display_order="8100" addon_id="XF">
+      <value>{
+    "default": "#ffffff",
+    "alternate": "#ffffff"
+}</value>
+    </property>
+    <property property_name="fontFamilyUi" group_name="fonts" title="User Interface Font" description="The font list for your main text" property_type="value" value_type="string" has_variations="" depends_on="" value_group="font" display_order="100" addon_id="XF">
+      <value>"Tahoma, Geneva, Verdana, sans-serif"</value>
+    </property>
+    <property property_name="fontFamilyBody" group_name="fonts" title="Body Text Font" description="This font is used for the text of messages etc." property_type="value" value_type="string" has_variations="" depends_on="" value_group="font" display_order="200" addon_id="XF">
+      <value>"Tahoma, Geneva, Verdana, sans-serif"</value>
+    </property>
+    <property property_name="publicHeader" group_name="headerNav" title="Header/logo row" description="The header row contains your logo and sits at the top of every public page" property_type="css" value_type="" has_variations="" depends_on="" value_group="" display_order="20000" css_components="text,background,extra" addon_id="XF">
+      <value>{
+    "color": "#ffffff",
+    "background-color": "#0960a3"
+}</value>
+    </property>
+    <property property_name="publicNav" group_name="headerNav" title="Navigation row" description="The navigation row sits below the header and contains the primary site navigation tabs and menus" property_type="css" value_type="" has_variations="" depends_on="" value_group="" display_order="20100" css_components="text,background,extra" addon_id="XF">
+      <value>{
+    "color": "@xf-textColor",
+    "background-color": "@xf-contentAltBg"
+}</value>
+    </property>
+    <property property_name="publicFooter" group_name="footer" title="Footer" description="The footer is the primary element that sits below the main content on all public pages" property_type="css" value_type="" has_variations="" depends_on="" value_group="" display_order="20000" css_components="text,background,border,extra" addon_id="XF">
+      <value>{
+    "color": "#ffffff",
+    "background-color": "#095e9d"
+}</value>
+    </property>
+    <property property_name="publicFooterLink" group_name="footer" title="Footer links" description="Controls styling for individual links within the footer" property_type="css" value_type="" has_variations="" depends_on="" value_group="" display_order="20100" css_components="text,extra" addon_id="XF">
+      <value>{
+    "color": "#ffffff"
+}</value>
+    </property>
+  </properties>
+</style>
