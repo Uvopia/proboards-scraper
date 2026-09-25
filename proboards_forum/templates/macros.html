@@ -1,0 +1,124 @@
+{% macro user_link(user, guest_name=None) -%}
+  {%- if user -%}
+    <a class="user-link" href="{{ url_for('users.profile', user_id=user.id) }}">{{ user.display_name }}</a>
+  {%- else -%}
+    <span class="user-link guest">{{ guest_name or 'Guest' }}</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro avatar(user, size=100) -%}
+  {%- if user and user.avatar_url -%}
+    <img class="avatar" src="{{ user.avatar_url }}" alt="" width="{{ size }}" height="{{ size }}" loading="lazy">
+  {%- else -%}
+    <span class="avatar avatar-placeholder" style="width: {{ size }}px; height: {{ size }}px; font-size: {{ (size * 0.45) | int }}px">{{ ((user.display_name if user else 'G') or 'G')[:1] | upper }}</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro pagination(page, endpoint) -%}
+  {%- if page.pages > 1 -%}
+  <div class="pagination">
+    <span>Page {{ page.page }} of {{ page.pages }}:</span>
+    {% for number in page.links() %}
+      {% if number is none %}<span>&hellip;</span>
+      {% elif number == page.page %}<span class="current">{{ number }}</span>
+      {% else %}<a href="{{ url_for(endpoint, **dict(kwargs, page=number)) }}">{{ number }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro last_post_info(post) -%}
+  {%- if post -%}
+    <a href="{{ post_url(post) }}">{{ post.thread.title | truncate(32, true) }}</a><br>
+    by {{ user_link(post.user, post.guest_name) }}<br>
+    <time datetime="{{ post.created_at | isodate }}">{{ post.created_at | date }}</time>
+  {%- else -%}
+    No posts yet
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro board_table(boards, stats, title=None, title_url=None) -%}
+<div class="container">
+  <div class="title-bar"><h2>{% if title_url %}<a href="{{ title_url }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</h2></div>
+  <div class="content">
+    <table class="list">
+      <thead><tr><th class="icon"></th><th>Board</th><th class="num">Threads</th><th class="num">Posts</th><th class="last">Last Post</th></tr></thead>
+      <tbody>
+      {% for board in boards %}
+        {% set s = stats[board.id] %}
+        <tr>
+          <td class="icon"><span class="state-icon {{ 'on' if s.unread }}" title="{{ 'New posts' if s.unread else 'No new posts' }}"></span></td>
+          <td>
+            <a class="name" href="{{ url_for('forum.board', board_id=board.id, slug=board.name|slug) }}">{{ board.name }}</a>
+            {% if board.description %}<div class="description">{{ board.description | render('html') }}</div>{% endif %}
+            {% if board.moderators %}<div class="moderators">Moderators: {% for m in board.moderators %}{{ user_link(m) }}{{ ', ' if not loop.last }}{% endfor %}</div>{% endif %}
+            {% set subs = board.sub_boards | selectattr('staff_only', 'false') | list if not (current_user and current_user.is_staff) else board.sub_boards %}
+            {% if subs %}<div class="sub-boards">Sub-boards: {% for sub in subs %}<a href="{{ url_for('forum.board', board_id=sub.id, slug=sub.name|slug) }}">{{ sub.name }}</a>{% endfor %}</div>{% endif %}
+          </td>
+          <td class="num">{{ '{:,}'.format(s.threads) }}</td>
+          <td class="num">{{ '{:,}'.format(s.posts) }}</td>
+          <td class="last">{{ last_post_info(s.last_post) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro thread_table(threads, info, title, show_board=False) -%}
+<div class="container">
+  <div class="title-bar"><h2>{{ title }}</h2></div>
+  <div class="content">
+    <table class="list">
+      <thead><tr><th class="icon"></th><th>Subject</th><th class="num">Replies</th><th class="num">Views</th><th class="last">Last Post</th></tr></thead>
+      <tbody>
+      {% for thread in threads %}
+        {% set i = info[thread.id] %}
+        <tr class="{{ 'announcement' if thread.announcement }} {{ 'sticky' if thread.sticky }}">
+          <td class="icon"><span class="state-icon thread {{ 'on' if i.unread }} {{ 'locked' if thread.locked }}" title="{{ 'Locked' if thread.locked else ('New posts' if i.unread else 'No new posts') }}"></span></td>
+          <td>
+            {% if thread.announcement %}<span class="tag announcement">Announcement</span>{% endif %}
+            {% if thread.sticky %}<span class="tag sticky">Sticky</span>{% endif %}
+            {% if thread.poll %}<span class="tag poll">Poll</span>{% endif %}
+            {% if i.unread %}<span class="tag new">New</span>{% endif %}
+            <a class="name" href="{{ thread_url(thread) }}">{{ thread.title }}</a>
+            <div class="description">Started by {{ user_link(thread.user) }}{% if show_board %} in <a href="{{ url_for('forum.board', board_id=thread.board.id, slug=thread.board.name|slug) }}">{{ thread.board.name }}</a>{% endif %}</div>
+          </td>
+          <td class="num">{{ '{:,}'.format(i.replies) }}</td>
+          <td class="num">{{ '{:,}'.format(thread.views or 0) }}</td>
+          <td class="last">{% if i.last_post %}by {{ user_link(i.last_post.user, i.last_post.guest_name) }}<br><a href="{{ post_url(i.last_post) }}"><time datetime="{{ i.last_post.created_at | isodate }}">{{ i.last_post.created_at | date }}</time></a>{% endif %}</td>
+        </tr>
+      {% else %}
+        <tr><td class="empty" colspan="5">There are no threads here yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro bbcode_editor(name, value='', id='body', required=True) -%}
+<div class="bbcode-toolbar" data-target="{{ id }}">
+  <button type="button" data-open="[b]" data-close="[/b]" title="Bold"><b>B</b></button>
+  <button type="button" data-open="[i]" data-close="[/i]" title="Italic"><i>I</i></button>
+  <button type="button" data-open="[u]" data-close="[/u]" title="Underline"><u>U</u></button>
+  <button type="button" data-open="[s]" data-close="[/s]" title="Strikethrough"><s>S</s></button>
+  <button type="button" data-open="[url={}]" data-close="[/url]" data-prompt="Link address:" title="Link">Link</button>
+  <button type="button" data-open="[img]{}" data-close="[/img]" data-prompt="Image address:" title="Image">Image</button>
+  <button type="button" data-open="[quote]" data-close="[/quote]" title="Quote">Quote</button>
+  <button type="button" data-open="[code]" data-close="[/code]" title="Code">Code</button>
+  <button type="button" data-open="[center]" data-close="[/center]" title="Center">Center</button>
+  <button type="button" data-open="[list]&#10;[*]" data-close="&#10;[/list]" title="List">List</button>
+  <button type="button" data-open=" :)" title="Smile">&#x1F642;</button>
+  <button type="button" data-open=" ;)" title="Wink">&#x1F609;</button>
+  <button type="button" data-open=" :D" title="Grin">&#x1F600;</button>
+  <button type="button" data-open=" :(" title="Sad">&#x1F641;</button>
+  <button type="button" data-open=" :P" title="Tongue">&#x1F61B;</button>
+  <button type="button" data-open=" 8)" title="Cool">&#x1F60E;</button>
+</div>
+<textarea id="{{ id }}" name="{{ name }}"{{ ' required' if required }}>{{ value }}</textarea>
+{%- endmacro %}
+
+{% macro csrf() -%}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{%- endmacro %}

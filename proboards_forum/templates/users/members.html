@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import avatar, user_link, pagination with context %}
+{% block title %}Members{% endblock %}
+{% block content %}
+<div class="controls">
+  <form method="get" style="display: flex; gap: 6px">
+    <input type="search" name="q" value="{{ query }}" placeholder="Find a member" aria-label="Find a member">
+    <input type="hidden" name="sort" value="{{ sort }}">
+    <button type="submit">Search</button>
+  </form>
+  {{ pagination(page, 'users.members', sort=sort, q=query) }}
+</div>
+<div class="container">
+  <div class="title-bar"><h2>Members</h2><span>{{ '{:,}'.format(page.total) }} total</span></div>
+  <div class="content">
+    <table class="list">
+      <thead><tr>
+        <th class="icon"></th>
+        <th><a href="{{ url_for('users.members', sort='name', q=query) }}">Name</a></th>
+        <th>Group</th>
+        <th class="num">Posts</th>
+        <th class="last"><a href="{{ url_for('users.members', sort='registered', q=query) }}">Registered</a></th>
+        <th class="last"><a href="{{ url_for('users.members', sort='active', q=query) }}">Last Active</a></th>
+      </tr></thead>
+      <tbody>
+      {% for user in page.items %}
+        <tr>
+          <td class="icon">{{ avatar(user, 32) }}</td>
+          <td><span class="name">{{ user_link(user) }}</span></td>
+          <td>{{ user.role_title }}</td>
+          <td class="num">{{ '{:,}'.format(counts.get(user.id, 0)) }}</td>
+          <td class="last">{{ user.date_registered | date(false) }}</td>
+          <td class="last">{{ (user.last_active | date) or 'Never' }}</td>
+        </tr>
+      {% else %}
+        <tr><td class="empty" colspan="6">No members found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="controls">{{ pagination(page, 'users.members', sort=sort, q=query) }}</div>
+{% endblock %}

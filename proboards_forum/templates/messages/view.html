@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import avatar, user_link, bbcode_editor, csrf with context %}
+{% block title %}{{ conversation.subject }}{% endblock %}
+{% block content %}
+<div class="nav-tree">
+  <a href="{{ url_for('messages.inbox') }}">Conversations</a><span class="sep">&rsaquo;</span>{{ conversation.subject }}
+</div>
+<div class="container">
+  <div class="title-bar">
+    <h2>{{ conversation.subject }}</h2>
+    <span>With {% for u in others %}{{ user_link(u) }}{{ ', ' if not loop.last }}{% endfor %}</span>
+  </div>
+  <div class="content">
+  {% for message in conversation.messages %}
+    <article class="post"{% if loop.last %} id="latest"{% endif %}>
+      <div class="mini-profile">
+        <div>{{ avatar(message.user, 60) }}</div>
+        <div><div class="user-name">{{ user_link(message.user) }}</div><div class="rank">{{ message.user.role_title }}</div></div>
+      </div>
+      <div class="post-main">
+        <div class="post-header"><span></span><span>{{ message.created_at | date }}</span></div>
+        <div class="message">{{ message.body | render }}</div>
+      </div>
+    </article>
+  {% endfor %}
+  </div>
+</div>
+<div class="container">
+  <div class="title-bar"><h2>Reply</h2></div>
+  <div class="content padded">
+    <form method="post">
+      {{ csrf() }}
+      {{ bbcode_editor('body') }}
+      <div class="form-actions"><button type="submit">Send Reply</button></div>
+    </form>
+  </div>
+</div>
+<form method="post" action="{{ url_for('messages.leave', conversation_id=conversation.id) }}" data-confirm="Remove this conversation from your inbox?">
+  {{ csrf() }}<button class="secondary" type="submit">Leave conversation</button>
+</form>
+{% endblock %}

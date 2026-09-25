@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import user_link, pagination with context %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="title-bar"><h2>Search</h2></div>
+  <div class="content padded">
+    <form class="stacked" method="get">
+      <div class="two-col">
+        <div>
+          <label for="q">Search for</label>
+          <input type="search" id="q" name="q" value="{{ query }}">
+        </div>
+        <div>
+          <label for="author">Posted by <span class="hint">(username or display name)</span></label>
+          <input type="text" id="author" name="author" value="{{ author }}">
+        </div>
+        <div>
+          <label for="in">Search in</label>
+          <select id="in" name="in">
+            <option value="posts"{{ ' selected' if scope == 'posts' }}>Posts and titles</option>
+            <option value="titles"{{ ' selected' if scope == 'titles' }}>Thread titles only</option>
+          </select>
+        </div>
+        <div>
+          <label for="board">Board</label>
+          <select id="board" name="board">
+            <option value="">All boards</option>
+            {% for b in boards %}<option value="{{ b.id }}"{{ ' selected' if b.id == board_id }}>{{ b.name }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-actions"><button type="submit">Search</button></div>
+    </form>
+  </div>
+</div>
+
+{% if page is not none %}
+<div class="container">
+  <div class="title-bar"><h2>Results</h2><span>{{ '{:,}'.format(page.total) }} found</span></div>
+  <div class="content">
+    <table class="list">
+      <tbody>
+      {% for post in page.items %}
+        <tr><td>
+          <a class="name" href="{{ post_url(post) }}">{{ post.thread.title }}</a>
+          <div class="description">by {{ user_link(post.user, post.guest_name) }} in {{ post.thread.board.name }} &middot; {{ post.created_at | date }}</div>
+          <div>{{ snippet(post.body, post.body_format) }}</div>
+        </td></tr>
+      {% else %}
+        <tr><td class="empty">No results found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="controls">{{ pagination(page, 'forum.search', q=query, author=author, board=board_id or '', **{'in': scope}) }}</div>
+{% endif %}
+{% endblock %}

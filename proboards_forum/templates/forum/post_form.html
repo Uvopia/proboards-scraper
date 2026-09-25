@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import bbcode_editor, csrf, user_link with context %}
+{% block title %}{{ {'thread': 'Create Thread', 'reply': 'Reply', 'edit': 'Edit Post'}[mode] }}{% endblock %}
+{% block content %}
+<div class="nav-tree">
+  <a href="{{ url_for('forum.index') }}">{{ settings.forum_name }}</a><span class="sep">&rsaquo;</span>
+  <a href="{{ url_for('forum.board', board_id=board.id, slug=board.name|slug) }}">{{ board.name }}</a>
+  {% if thread %}<span class="sep">&rsaquo;</span><a href="{{ thread_url(thread) }}">{{ thread.title }}</a>{% endif %}
+</div>
+
+{% if preview %}
+<div class="container">
+  <div class="title-bar"><h2>Preview</h2></div>
+  <div class="content padded message">{{ preview | render }}</div>
+</div>
+{% endif %}
+
+<div class="container">
+  <div class="title-bar"><h2>
+    {% if mode == 'thread' %}Create Thread in {{ board.name }}
+    {% elif mode == 'reply' %}Reply to {{ thread.title }}
+    {% else %}Edit Post{% endif %}
+  </h2></div>
+  <div class="content padded">
+    <form class="stacked" method="post">
+      {{ csrf() }}
+      {% if mode == 'thread' or (mode == 'edit' and is_first) %}
+      <label for="title">Subject</label>
+      <input type="text" id="title" name="title" maxlength="255" value="{{ form.get('title', '') }}" required>
+      {% endif %}
+
+      <label for="body">Message</label>
+      {{ bbcode_editor('body', form.get('body', '')) }}
+
+      {% if mode == 'thread' %}
+      <fieldset>
+        <legend>Poll (optional)</legend>
+        <label for="poll_question">Question</label>
+        <input type="text" id="poll_question" name="poll_question" maxlength="255" value="{{ form.get('poll_question', '') }}">
+        <label for="poll_options">Options <span class="hint">(one per line, 2&ndash;20)</span></label>
+        <textarea id="poll_options" name="poll_options" style="min-height: 100px">{{ form.get('poll_options', '') }}</textarea>
+      </fieldset>
+      {% if moderator %}
+      <fieldset>
+        <legend>Thread options</legend>
+        <label class="checkbox"><input type="checkbox" name="sticky" value="1"{{ ' checked' if form.get('sticky') }}> Sticky</label>
+        <label class="checkbox"><input type="checkbox" name="announcement" value="1"{{ ' checked' if form.get('announcement') }}> Announcement</label>
+        <label class="checkbox"><input type="checkbox" name="locked" value="1"{{ ' checked' if form.get('locked') }}> Locked</label>
+      </fieldset>
+      {% endif %}
+      {% endif %}
+
+      <div class="form-actions">
+        <button type="submit" name="action" value="post">{{ 'Save' if mode == 'edit' else ('Create Thread' if mode == 'thread' else 'Post Reply') }}</button>
+        <button class="secondary" type="submit" name="action" value="preview">Preview</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if recent %}
+<div class="container">
+  <div class="title-bar"><h2>Latest posts in this thread</h2></div>
+  <div class="content">
+    {% for post in recent | reverse %}
+    <div class="content padded" style="border-bottom: 1px solid var(--border)">
+      <div class="post-header"><span>{{ user_link(post.user, post.guest_name) }}</span><span>{{ post.created_at | date }}</span></div>
+      <div class="message">{{ post.body | render(post.body_format) }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

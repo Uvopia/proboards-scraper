@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import csrf %}
+{% block title %}Categories &amp; Boards{% endblock %}
+{% macro board_rows(boards, depth=0) %}
+  {% for board in boards %}
+  <tr>
+    <td style="padding-left: {{ 10 + depth * 24 }}px">{{ '&#x21B3; ' | safe if depth }}<a href="{{ url_for('admin.edit_board', board_id=board.id) }}">{{ board.name }}</a>
+      {% if board.staff_only %}<span class="tag">Staff only</span>{% endif %}
+      {% if board.read_only %}<span class="tag">Read only</span>{% endif %}
+    </td>
+    <td class="num">{{ board.position }}</td>
+  </tr>
+  {{ board_rows(board.sub_boards, depth + 1) }}
+  {% endfor %}
+{% endmacro %}
+{% block content %}
+{% include 'admin/_nav.html' %}
+<div class="controls">
+  <form method="post" action="{{ url_for('admin.save_category') }}" style="display: flex; gap: 6px">
+    {{ csrf() }}
+    <input type="text" name="name" placeholder="New category name" aria-label="New category name" required>
+    <button type="submit">Add Category</button>
+  </form>
+  <a class="button" href="{{ url_for('admin.edit_board') }}">Add Board</a>
+</div>
+{% for category in categories %}
+<div class="container">
+  <div class="title-bar">
+    <form method="post" action="{{ url_for('admin.save_category', category_id=category.id) }}" style="display: flex; gap: 6px; align-items: center; flex: 1">
+      {{ csrf() }}
+      <input type="text" name="name" value="{{ category.name }}" aria-label="Category name" style="max-width: 300px">
+      <input type="number" name="position" value="{{ category.position }}" aria-label="Position" style="width: 70px">
+      <button class="secondary" type="submit">Save</button>
+    </form>
+    <form method="post" action="{{ url_for('admin.delete_category', category_id=category.id) }}" data-confirm="Delete this category?">
+      {{ csrf() }}<button class="danger" type="submit">Delete</button>
+    </form>
+  </div>
+  <div class="content">
+    <table class="list">
+      <thead><tr><th>Board</th><th class="num">Position</th></tr></thead>
+      <tbody>
+      {{ board_rows(category.boards) }}
+      {% if not category.boards %}<tr><td class="empty" colspan="2">No boards in this category.</td></tr>{% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<p>No categories yet. Add one above to get started.</p>
+{% endfor %}
+{% endblock %}

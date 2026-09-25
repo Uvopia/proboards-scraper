@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import bbcode_editor, csrf with context %}
+{% block title %}New Conversation{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="title-bar"><h2>New Conversation</h2></div>
+  <div class="content padded">
+    <form class="stacked" method="post">
+      {{ csrf() }}
+      <label for="to">To <span class="hint">(usernames, separated by commas)</span></label>
+      <input type="text" id="to" name="to" value="{{ to }}" required>
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" name="subject" maxlength="255" value="{{ form.get('subject', '') }}" required>
+      <label for="body">Message</label>
+      {{ bbcode_editor('body', form.get('body', '')) }}
+      <div class="form-actions"><button type="submit">Send</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

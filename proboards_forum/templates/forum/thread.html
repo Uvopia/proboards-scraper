@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import avatar, user_link, pagination, bbcode_editor, csrf with context %}
+{% block title %}{{ thread.title }}{% endblock %}
+{% block content %}
+{% set board = thread.board %}
+<div class="nav-tree">
+  <a href="{{ url_for('forum.index') }}">{{ settings.forum_name }}</a><span class="sep">&rsaquo;</span>
+  {{ board.category.name }}<span class="sep">&rsaquo;</span>
+  {% for parent in board.ancestors() %}<a href="{{ url_for('forum.board', board_id=parent.id, slug=parent.name|slug) }}">{{ parent.name }}</a><span class="sep">&rsaquo;</span>{% endfor %}
+  <a href="{{ url_for('forum.board', board_id=board.id, slug=board.name|slug) }}">{{ board.name }}</a><span class="sep">&rsaquo;</span>
+  <a href="{{ thread_url(thread) }}">{{ thread.title }}</a>
+</div>
+
+{% if thread.poll %}
+{% set poll = thread.poll %}
+{% set total = poll.total_votes %}
+<div class="container poll">
+  <div class="title-bar"><h2>Poll{% if poll.closed %} (closed){% endif %}</h2><span>{{ total }} vote{{ '' if total == 1 else 's' }}</span></div>
+  <div class="content padded">
+    <div class="question">{{ poll.question }}</div>
+    {% if current_user and not has_voted and not poll.closed and not thread.locked %}
+    <form method="post" action="{{ url_for('forum.vote', thread_id=thread.id) }}">
+      {{ csrf() }}
+      {% for option in poll.options %}
+      <div><label class="checkbox"><input type="radio" name="option" value="{{ option.id }}" required> {{ option.text }}</label></div>
+      {% endfor %}
+      <div class="form-actions"><button type="submit">Vote</button></div>
+    </form>
+    {% else %}
+      {% for option in poll.options %}
+      {% set pct = (100 * option.votes / total) if total else 0 %}
+      <div class="poll-option {{ 'chosen' if option.id == voted_option }}">
+        <span>{{ option.text }}{% if option.id == voted_option %} &#x2714;{% endif %}</span>
+        <div class="poll-bar"><span style="width: {{ pct | round(1) }}%"></span></div>
+        <span class="count">{{ option.votes }} ({{ pct | round | int }}%)</span>
+      </div>
+      {% endfor %}
+      {% if not current_user %}<p class="hint">Log in to vote.</p>{% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<div class="controls">
+  {{ pagination(page, 'forum.thread', thread_id=thread.id, slug=thread.title|slug) }}
+  <span></span>
+  {% if can_reply(thread) %}
+  <a class="button" href="{{ url_for('forum.reply', thread_id=thread.id) }}">Reply</a>
+  {% elif thread.locked %}
+  <span class="tag">Locked</span>
+  {% endif %}
+</div>
+
+<div class="container">
+  <div class="title-bar">
+    <h2>{% if thread.locked %}&#x1F512; {% endif %}{{ thread.title }}</h2>
+    <span>{{ '{:,}'.format(thread.views or 0) }} views</span>
+  </div>
+  <div class="content">
+  {% for post in page.items %}
+    {% set author = post.user %}
+    <article class="post" id="post-{{ post.id }}">
+      <div class="mini-profile">
+        <div>{{ avatar(author, 100) }}</div>
+        <div>
+          <div class="user-name">{{ user_link(author, post.guest_name) }}</div>
+          {% if author %}
+          <div class="rank">{{ author.role_title }}</div>
+          <div class="stats">Posts: {{ '{:,}'.format(counts.get(author.id, 0)) }}</div>
+          {% if author.status %}<div class="status">{{ author.status }}</div>{% endif %}
+          {% else %}
+          <div class="rank">Guest</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="post-main">
+        <div class="post-header">
+          <span class="post-title">{{ 'Re: ' if not loop.first or page.page > 1 }}{{ thread.title }}</span>
+          <a href="{{ post_url(post) }}"><time datetime="{{ post.created_at | isodate }}">{{ post.created_at | date }}</time></a>
+        </div>
+        <div class="message">{{ post.body | render(post.body_format) }}</div>
+        {% if post.edited_at %}
+        <div class="edited">Last edited {{ post.edited_at | date }}{% if post.edited_by %} by {{ post.edited_by.display_name }}{% endif %}</div>
+        {% endif %}
+        {% if author and author.signature %}
+        <div class="signature">{{ author.signature | render(author.signature_format) }}</div>
+        {% endif %}
+        <div class="post-controls">
+          {% if can_reply(thread) %}<a href="{{ url_for('forum.reply', thread_id=thread.id, quote=post.id) }}">Quote</a>{% endif %}
+          {% if can_edit_post(post) %}
+          <a href="{{ url_for('forum.edit_post', post_id=post.id) }}">Edit</a>
+          <form class="inline" method="post" action="{{ url_for('forum.delete_post', post_id=post.id) }}" data-confirm="Delete this post?">{{ csrf() }}<button class="link" type="submit">Delete</button></form>
+          {% endif %}
+        </div>
+      </div>
+    </article>
+  {% endfor %}
+  </div>
+</div>
+
+<div class="controls">
+  {{ pagination(page, 'forum.thread', thread_id=thread.id, slug=thread.title|slug) }}
+</div>
+
+{% if can_reply(thread) %}
+<div class="container">
+  <div class="title-bar"><h2>Quick Reply</h2></div>
+  <div class="content padded">
+    <form method="post" action="{{ url_for('forum.reply', thread_id=thread.id) }}">
+      {{ csrf() }}
+      {{ bbcode_editor('body', required=True) }}
+      <div class="form-actions">
+        <button type="submit" name="action" value="post">Post Reply</button>
+        <button class="secondary" type="submit" name="action" value="preview">Preview</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% if moderator %}
+<div class="container">
+  <div class="title-bar"><h2>Moderation</h2></div>
+  <div class="content padded">
+    <form class="inline" method="post" action="{{ url_for('forum.moderate_thread', thread_id=thread.id) }}">
+      {{ csrf() }}
+      <button type="submit" name="action" value="{{ 'unlock' if thread.locked else 'lock' }}">{{ 'Unlock' if thread.locked else 'Lock' }}</button>
+      <button type="submit" name="action" value="{{ 'unsticky' if thread.sticky else 'sticky' }}">{{ 'Unsticky' if thread.sticky else 'Sticky' }}</button>
+      <button type="submit" name="action" value="{{ 'unannounce' if thread.announcement else 'announce' }}">{{ 'Remove announcement' if thread.announcement else 'Make announcement' }}</button>
+      {% if thread.poll %}
+      <button type="submit" name="action" value="{{ 'open_poll' if thread.poll.closed else 'close_poll' }}">{{ 'Reopen poll' if thread.poll.closed else 'Close poll' }}</button>
+      {% endif %}
+    </form>
+    <form class="inline" method="post" action="{{ url_for('forum.moderate_thread', thread_id=thread.id) }}">
+      {{ csrf() }}
+      <input type="hidden" name="action" value="move">
+      <select name="board_id" aria-label="Move to board" style="width: auto">
+        {% for b in boards %}<option value="{{ b.id }}"{{ ' selected' if b.id == thread.board_id }}>{{ b.name }}</option>{% endfor %}
+      </select>
+      <button type="submit">Move</button>
+    </form>
+    <form class="inline" method="post" action="{{ url_for('forum.moderate_thread', thread_id=thread.id) }}" data-confirm="Delete this entire thread?">
+      {{ csrf() }}
+      <button class="danger" type="submit" name="action" value="delete">Delete thread</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

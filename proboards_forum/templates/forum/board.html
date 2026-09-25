@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import board_table, thread_table, pagination, user_link with context %}
+{% block title %}{{ board.name }}{% endblock %}
+{% block content %}
+<div class="nav-tree">
+  <a href="{{ url_for('forum.index') }}">{{ settings.forum_name }}</a><span class="sep">&rsaquo;</span>
+  {{ board.category.name }}<span class="sep">&rsaquo;</span>
+  {% for parent in board.ancestors() %}<a href="{{ url_for('forum.board', board_id=parent.id, slug=parent.name|slug) }}">{{ parent.name }}</a><span class="sep">&rsaquo;</span>{% endfor %}
+  <a href="{{ url_for('forum.board', board_id=board.id, slug=board.name|slug) }}">{{ board.name }}</a>
+</div>
+
+{% if sub_boards %}
+  {{ board_table(sub_boards, stats, 'Sub-boards') }}
+{% endif %}
+
+<div class="controls">
+  {{ pagination(page, 'forum.board', board_id=board.id, slug=board.name|slug) }}
+  <span></span>
+  {% if can_start %}
+  <a class="button" href="{{ url_for('forum.new_thread', board_id=board.id) }}">Create Thread</a>
+  {% elif not current_user %}
+  <a class="button secondary" href="{{ url_for('users.login') }}">Login to post</a>
+  {% endif %}
+</div>
+
+{{ thread_table(announcements + page.items, thread_info, board.name) }}
+
+<div class="controls">
+  {{ pagination(page, 'forum.board', board_id=board.id, slug=board.name|slug) }}
+  {% if board.moderators %}<span class="moderators">Moderators: {% for m in board.moderators %}{{ user_link(m) }}{{ ', ' if not loop.last }}{% endfor %}</span>{% endif %}
+</div>
+{% endblock %}

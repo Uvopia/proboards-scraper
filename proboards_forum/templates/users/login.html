@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import csrf %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 440px; margin: 0 auto 16px">
+  <div class="title-bar"><h2>Login</h2></div>
+  <div class="content padded">
+    <form class="stacked" method="post">
+      {{ csrf() }}
+      <input type="hidden" name="next" value="{{ next_url }}">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+      <div class="form-actions"><button type="submit">Login</button></div>
+    </form>
+    {% if settings.registration_open == '1' %}<p>Not a member? <a href="{{ url_for('users.register') }}">Register</a></p>{% endif %}
+  </div>
+</div>
+{% endblock %}

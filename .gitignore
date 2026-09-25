@@ -131,3 +131,6 @@ dmypy.json
 # vim temp files
 *.swo
 *.swp
+
+# Default forum data directory (database, secret key, uploads)
+/forum/

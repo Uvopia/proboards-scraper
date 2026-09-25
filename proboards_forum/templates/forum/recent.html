@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import thread_table, pagination with context %}
+{% block title %}Recent Threads{% endblock %}
+{% block content %}
+<div class="controls">{{ pagination(page, 'forum.recent') }}</div>
+{{ thread_table(page.items, thread_info, 'Recent Threads', show_board=True) }}
+<div class="controls">{{ pagination(page, 'forum.recent') }}</div>
+{% endblock %}

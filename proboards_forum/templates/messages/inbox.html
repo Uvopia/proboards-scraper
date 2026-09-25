@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import user_link, pagination with context %}
+{% block title %}Conversations{% endblock %}
+{% block content %}
+<div class="controls">
+  {{ pagination(page, 'messages.inbox') }}
+  <span></span>
+  <a class="button" href="{{ url_for('messages.new') }}">New Conversation</a>
+</div>
+<div class="container">
+  <div class="title-bar"><h2>Conversations</h2></div>
+  <div class="content">
+    <table class="list">
+      <thead><tr><th class="icon"></th><th>Subject</th><th>Participants</th><th class="last">Last Message</th></tr></thead>
+      <tbody>
+      {% for conversation, last_read_at in page.items %}
+        {% set unread = conversation.last_message_at > last_read_at %}
+        <tr class="{{ 'unread' if unread }}">
+          <td class="icon"><span class="state-icon thread {{ 'on' if unread }}"></span></td>
+          <td><a class="name" href="{{ url_for('messages.view', conversation_id=conversation.id) }}">{{ conversation.subject }}</a></td>
+          <td>{% for p in conversation.participants if p.user_id != current_user.id %}{{ user_link(p.user) }}{{ ', ' if not loop.last }}{% endfor %}</td>
+          <td class="last">{{ conversation.last_message_at | date }}</td>
+        </tr>
+      {% else %}
+        <tr><td class="empty" colspan="4">You have no conversations.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

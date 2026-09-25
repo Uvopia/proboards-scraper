@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+{% include 'admin/_nav.html' %}
+<div class="container">
+  <div class="title-bar"><h2>Admin Dashboard</h2></div>
+  <div class="content">
+    <table class="list"><tbody>
+      <tr><td>Members</td><td class="num">{{ '{:,}'.format(counts.members) }}</td></tr>
+      <tr><td>Categories</td><td class="num">{{ '{:,}'.format(counts.categories) }}</td></tr>
+      <tr><td>Boards</td><td class="num">{{ '{:,}'.format(counts.boards) }}</td></tr>
+      <tr><td>Threads</td><td class="num">{{ '{:,}'.format(counts.threads) }}</td></tr>
+      <tr><td>Posts</td><td class="num">{{ '{:,}'.format(counts.posts) }}</td></tr>
+      <tr><td>Shoutbox posts</td><td class="num">{{ '{:,}'.format(counts.shouts) }}</td></tr>
+    </tbody></table>
+  </div>
+</div>
+{% endblock %}

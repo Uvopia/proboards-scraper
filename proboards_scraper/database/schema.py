@@ -2,8 +2,7 @@ from sqlalchemy import (
     Boolean, Column, Integer, ForeignKey, String, UniqueConstraint
 )
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
