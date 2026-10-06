@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<style title="Flourish" description="Black-to-grey page, white content box, silver title bars and rainbow category bars. A port of the ProBoards v4 Flourish skin by Silent of IncrediBAD." enable_variations="0" user_selectable="1" base_version_id="2031370" export_version="2">
+<style title="Flourish" description="Black page, silver bars and rainbow category bars. A port of the ProBoards v4 Flourish skin." enable_variations="0" user_selectable="1" base_version_id="2031370" export_version="2">
   <assets />
   <templates>
     <template title="extra.less" type="public" addon_id="XF" version_id="2031370" version_string="2.3.13"><![CDATA[/* =============================================================================
