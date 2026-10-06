@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style title="MAC" description="Frosted grey glass over a Mac OS X galaxy wallpaper. Port of the MyBB MAC theme." enable_variations="0" user_selectable="1" base_version_id="2031370" export_version="2">
+  <assets />
+  <templates>
+    <template title="extra.less" type="public" addon_id="XF" version_id="2031370" version_string="2.3.13"><![CDATA[/* =============================================================================
+   MAC — a XenForo 2.3 port of the MyBB "MAC" theme.
+   A Mac OS X style galaxy wallpaper behind a frosted grey glass panel, the embossed
+   "MAC" title, silver tabs, grey gradient title bars and pale grey post rows.
+   The galaxy is drawn with CSS gradients and one small star image, so no uploads.
+   ============================================================================= */
+
+// Change this to your board's name, or delete the "Title" section to use a logo image.
+@mac-title: "MAC";
+
+@mac-bar: linear-gradient(180deg, #cbc8cc 0%, #bdbdbd 40%, #b3b3b3 70%, #a8abaa 100%);
+@mac-tab: linear-gradient(180deg, #dcdbdd 0%, #c8c8c8 50%, #b8b8b8 100%);
+@mac-sub: #d8dbda;
+
+// ---- Galaxy wallpaper ------------------------------------------------------------------
+
+html
+{
+	background-color: #2a1245;
+	background-image:
+		url("data:image/png;base64,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"),
+		radial-gradient(ellipse 30% 35% at 82% 38%, rgba(240, 105, 215, .95) 0%, rgba(240, 105, 215, 0) 100%),
+		radial-gradient(ellipse 45% 30% at 55% 50%, rgba(255, 225, 248, .55) 0%, rgba(255, 225, 248, 0) 100%),
+		radial-gradient(ellipse 35% 45% at 18% 70%, rgba(130, 85, 175, .85) 0%, rgba(130, 85, 175, 0) 100%),
+		radial-gradient(ellipse 40% 30% at 70% 85%, rgba(125, 95, 170, .8) 0%, rgba(125, 95, 170, 0) 100%),
+		linear-gradient(180deg, #000 0%, #0b0925 8%, #361b4d 22%, #5a2c80 45%, #714b9a 65%, #6a3784 85%, #1a0835 100%);
+	background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+	background-attachment: fixed;
+	background-size: 400px 400px, cover, cover, cover, cover, cover;
+}
+
+body
+{
+	background: transparent;
+}
+
+// ---- The frosted glass panel ---------------------------------------------------------
+
+.p-pageWrapper
+{
+	max-width: 1154px;
+	margin: 8px auto 0;
+	background: rgba(196, 192, 200, .62);
+	border-radius: 8px 8px 0 0;
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+}
+
+.p-header-inner,
+.p-nav-inner,
+.p-sectionLinks-inner,
+.p-body-inner,
+.p-footer-inner
+{
+	max-width: 1114px;
+}
+
+.p-header,
+.p-nav,
+.p-sectionLinks,
+.p-body,
+.p-footer
+{
+	background: transparent;
+	border: none;
+}
+
+// ---- Title ------------------------------------------------------------------------------
+
+.p-header
+{
+	background: linear-gradient(180deg, rgba(140, 140, 140, .9) 0, rgba(150, 150, 150, .75) 55px, rgba(150, 150, 150, 0) 100%);
+	border-radius: 8px 8px 0 0;
+}
+
+.p-header-content
+{
+	justify-content: center;
+	padding: 18px 0 4px;
+}
+
+.p-header-logo
+{
+	margin: 0 auto;
+
+	img
+	{
+		display: none;
+	}
+
+	a
+	{
+		text-decoration: none;
+
+		&::after
+		{
+			content: @mac-title;
+			font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+			font-size: 64px;
+			font-weight: 900;
+			line-height: 1;
+			letter-spacing: 1px;
+			color: #9a9a9a;
+			text-shadow: -1px -1px 0 #e6e6e6, 1px 2px 0 #5a5a5a, 2px 4px 6px rgba(0, 0, 0, .55);
+		}
+	}
+}
+
+// ---- Silver tabs ---------------------------------------------------------------------------
+
+.p-navSticky.is-sticky .p-nav
+{
+	background: rgba(196, 192, 200, .92);
+}
+
+.p-nav-list
+{
+	justify-content: center;
+	width: 100%;
+	gap: 8px;
+
+	.p-navEl
+	{
+		background: @mac-tab;
+		border-radius: 6px 6px 0 0;
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+	}
+
+	.p-navEl-link,
+	.p-navEl-splitTrigger
+	{
+		color: #222;
+		font-weight: 700;
+		font-size: 13px;
+		text-shadow: 0 1px 0 rgba(255, 255, 255, .6);
+
+		&:hover
+		{
+			color: #000;
+			text-decoration: none;
+		}
+	}
+
+	.p-navEl.is-selected
+	{
+		background: linear-gradient(180deg, #f0f0f0 0%, #d8d8d8 100%);
+	}
+}
+
+.p-nav .p-navgroup
+{
+	background: transparent;
+}
+
+.p-nav .p-navgroup-link,
+.p-nav-menuTrigger,
+.p-nav-smallLogo
+{
+	color: #222;
+
+	&:hover
+	{
+		background: rgba(255, 255, 255, .35);
+		color: #000;
+		text-decoration: none;
+	}
+}
+
+// Sub-navigation: the grey "welcome back" box
+.p-sectionLinks-inner
+{
+	background: linear-gradient(180deg, #c4c1c4 0%, #b6b6b6 55%, #a7a6a7 100%);
+	border: 1px solid rgba(255, 255, 255, .5);
+	border-radius: 4px;
+	color: #222;
+
+	a
+	{
+		color: #6a6a6a;
+
+		&:hover
+		{
+			color: #222;
+		}
+	}
+}
+
+// ---- Body ------------------------------------------------------------------------------
+
+.p-body-inner
+{
+	color: #222;
+	padding-top: 10px;
+}
+
+.p-breadcrumbs
+{
+	font-weight: 700;
+
+	a
+	{
+		color: #7a7a7a;
+
+		&:hover
+		{
+			color: #333;
+		}
+	}
+
+	> li:last-child a
+	{
+		display: inline-block;
+		padding: 2px 6px;
+		background: #c2c3c0;
+		border-radius: 4px;
+		color: #222;
+	}
+}
+
+.p-title-value
+{
+	color: #222;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+}
+
+// ---- Blocks: grey gradient title bars, pale grey rows ---------------------------------------
+
+.block-container
+{
+	background: #f6f6f6;
+	border: 1px solid rgba(255, 255, 255, .55);
+	border-radius: 4px;
+	box-shadow: 0 1px 3px rgba(40, 20, 60, .25);
+}
+
+.block-header,
+.block-filterBar,
+.menu-header,
+.overlay-title
+{
+	background: @mac-bar;
+	border-bottom: 1px solid #a3a3a3;
+	color: #fff;
+	font-weight: 700;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+
+	a,
+	a:hover
+	{
+		color: #fff;
+	}
+
+	.block-desc
+	{
+		color: rgba(255, 255, 255, .85);
+	}
+}
+
+.block-minorHeader,
+.block-tabHeader,
+.menu-tabHeader,
+.dataList-row--header .dataList-cell
+{
+	background: @mac-sub;
+	border-bottom: 1px solid #c4c6c5;
+	color: #222;
+	font-weight: 700;
+	text-shadow: none;
+
+	a
+	{
+		color: #222;
+	}
+}
+
+.block-tabHeader .tabs-tab,
+.menu-tabHeader .tabs-tab
+{
+	color: #6a6a6a;
+
+	&:hover
+	{
+		color: #222;
+	}
+
+	&.is-active
+	{
+		color: #222;
+		border-color: #8a8a8a;
+	}
+}
+
+.block-footer
+{
+	background: @mac-bar;
+	border-top-color: #a3a3a3;
+	color: #fff;
+
+	a
+	{
+		color: #fff;
+	}
+}
+
+.node + .node,
+.structItem
+{
+	border-top-color: #dedede;
+}
+
+.node-body,
+.structItem
+{
+	background: #f6f6f6;
+}
+
+.node-title a,
+.structItem-title a
+{
+	color: #333;
+	font-weight: 700;
+
+	&:hover
+	{
+		color: #000;
+	}
+}
+
+.node-icon i
+{
+	color: #8a8a8a;
+}
+
+.node--unread .node-icon i
+{
+	color: #5a5a5a;
+}
+
+.message,
+.message-inner
+{
+	background: #f6f6f6;
+	border-color: #d4d4d4;
+}
+
+.message-cell--user
+{
+	background: #efefef;
+	border-right-color: #d4d4d4;
+}
+
+.message-attribution
+{
+	background: @mac-sub;
+	color: #222;
+}
+
+// ---- Buttons: small silver pills ----------------------------------------------------------
+
+.button,
+a.button
+{
+	background: linear-gradient(180deg, #f2f2f2 0%, #d6d6d6 100%);
+	border: 1px solid #9a9a9a;
+	color: #222;
+
+	&:hover
+	{
+		background: linear-gradient(180deg, #fafafa 0%, #e2e2e2 100%);
+		color: #000;
+	}
+}
+
+.button.button--primary,
+a.button.button--primary
+{
+	background: @mac-bar;
+	border-color: #8a8a8a;
+	color: #fff;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+}
+
+// ---- Footer: the grey links bar ----------------------------------------------------------
+
+.p-footer-inner
+{
+	padding-bottom: 14px;
+	color: #222;
+}
+
+.p-footer-row
+{
+	background: linear-gradient(180deg, #d4d4d4 0%, #c4c4c4 100%);
+	border: 1px solid rgba(255, 255, 255, .55);
+	border-radius: 4px;
+	padding: 4px 10px;
+
+	a
+	{
+		color: #7a7a7a;
+
+		&:hover
+		{
+			color: #222;
+		}
+	}
+}
+
+.p-footer-copyright
+{
+	color: #222;
+
+	a
+	{
+		color: #7a7a7a;
+	}
+}
+
+@media (max-width: 1174px)
+{
+	.p-pageWrapper
+	{
+		margin-top: 0;
+		border-radius: 0;
+	}
+}
+]]></template>
+  </templates>
+  <properties>
+    <property property_name="paletteColor1" group_name="palette" title="Color 1" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1000" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#f6f6f6",
+    "alternate": "#f6f6f6"
+}</value>
+    </property>
+    <property property_name="paletteColor2" group_name="palette" title="Color 2" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1100" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#d8dbda",
+    "alternate": "#d8dbda"
+}</value>
+    </property>
+    <property property_name="paletteColor3" group_name="palette" title="Color 3" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1200" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#8a8a8a",
+    "alternate": "#8a8a8a"
+}</value>
+    </property>
+    <property property_name="paletteColor4" group_name="palette" title="Color 4" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1300" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#5a5a5a",
+    "alternate": "#5a5a5a"
+}</value>
+    </property>
+    <property property_name="paletteColor5" group_name="palette" title="Color 5" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="primary" display_order="1400" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#222222",
+    "alternate": "#222222"
+}</value>
+    </property>
+    <property property_name="paletteAccent1" group_name="palette" title="Accent 1" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="accent" display_order="2000" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#5a5a5a",
+    "alternate": "#5a5a5a"
+}</value>
+    </property>
+    <property property_name="paletteNeutral3" group_name="palette" title="Neutral 3" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="neutral" display_order="3200" addon_id="XF">
+      <value_parameters>hidePalette=true</value_parameters>
+      <value>{
+    "default": "#222222",
+    "alternate": "#222222"
+}</value>
+    </property>
+    <property property_name="pageBg" group_name="color" title="Page background color" description="The background of the page itself, on which all other content rests" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="contentBackground" display_order="2100" addon_id="XF">
+      <value>{
+    "default": "#5a2c80",
+    "alternate": "#5a2c80"
+}</value>
+    </property>
+    <property property_name="contentBg" group_name="color" title="Content background color" description="Most normal content will sit on this background" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="contentBackground" display_order="2000" addon_id="XF">
+      <value>{
+    "default": "#f6f6f6",
+    "alternate": "#f6f6f6"
+}</value>
+    </property>
+    <property property_name="contentAltBg" group_name="color" title="Alternate content background color" description="In order to differentiate it, some content will be presented on this alternate background" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="contentBackground" display_order="2200" addon_id="XF">
+      <value>{
+    "default": "#efefef",
+    "alternate": "#efefef"
+}</value>
+    </property>
+    <property property_name="contentHighlightBg" group_name="color" title="Highlighted content background color" description="When the standard background color is highlighted or selected, it will use this color" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="contentBackground" display_order="2300" addon_id="XF">
+      <value>{
+    "default": "#e6e6e6",
+    "alternate": "#e6e6e6"
+}</value>
+    </property>
+    <property property_name="textColor" group_name="color" title="Text color" description="Unless otherwise specified, text will be this color" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="textBasic" display_order="100" addon_id="XF">
+      <value>{
+    "default": "#222222",
+    "alternate": "#222222"
+}</value>
+    </property>
+    <property property_name="textColorDimmed" group_name="color" title="Dimmed text color" description="Used when less-important text is placed next to normal text" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="textBasic" display_order="200" addon_id="XF">
+      <value>{
+    "default": "#222222",
+    "alternate": "#222222"
+}</value>
+    </property>
+    <property property_name="textColorMuted" group_name="color" title="Muted text color" description="Text is further de-emphasised using this style" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="textBasic" display_order="300" addon_id="XF">
+      <value>{
+    "default": "#6a6a6a",
+    "alternate": "#6a6a6a"
+}</value>
+    </property>
+    <property property_name="linkColor" group_name="color" title="Link color" description="Basic hyperlinks on standard background colors will use this style" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="links" display_order="1000" addon_id="XF">
+      <value>{
+    "default": "#6a6a6a",
+    "alternate": "#6a6a6a"
+}</value>
+    </property>
+    <property property_name="linkHoverColor" group_name="color" title="Link hover color" description="Basic hyperlinks will turn this color when hovered" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="links" display_order="1100" addon_id="XF">
+      <value>{
+    "default": "#222222",
+    "alternate": "#222222"
+}</value>
+    </property>
+    <property property_name="borderColor" group_name="color" title="Border color" description="Structural borders around blocks of content generally use this color" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="borderBasic" display_order="4000" addon_id="XF">
+      <value>{
+    "default": "#c4c4c4",
+    "alternate": "#c4c4c4"
+}</value>
+    </property>
+    <property property_name="borderColorLight" group_name="color" title="Light border color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="borderBasic" display_order="4200" addon_id="XF">
+      <value>{
+    "default": "#d4d4d4",
+    "alternate": "#d4d4d4"
+}</value>
+    </property>
+    <property property_name="borderColorFaint" group_name="color" title="Faint border color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="borderBasic" display_order="4100" addon_id="XF">
+      <value>{
+    "default": "#e4e4e4",
+    "alternate": "#e4e4e4"
+}</value>
+    </property>
+    <property property_name="majorHeadingBg" group_name="color" title="Major heading background color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="heading" display_order="6100" addon_id="XF">
+      <value>{
+    "default": "#d8dbda",
+    "alternate": "#d8dbda"
+}</value>
+    </property>
+    <property property_name="majorHeadingTextColor" group_name="color" title="Major heading text color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="heading" display_order="6200" addon_id="XF">
+      <value>{
+    "default": "#222222",
+    "alternate": "#222222"
+}</value>
+    </property>
+    <property property_name="minorHeadingTextColor" group_name="color" title="Minor heading text color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="heading" display_order="6400" addon_id="XF">
+      <value>{
+    "default": "#222222",
+    "alternate": "#222222"
+}</value>
+    </property>
+    <property property_name="chromeBg" group_name="color" title="Page chrome background color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="chrome" display_order="6000" addon_id="XF">
+      <value>{
+    "default": "#969696",
+    "alternate": "#969696"
+}</value>
+    </property>
+    <property property_name="chromeTextColor" group_name="color" title="Page chrome text color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="chrome" display_order="6050" addon_id="XF">
+      <value>{
+    "default": "#ffffff",
+    "alternate": "#ffffff"
+}</value>
+    </property>
+    <property property_name="metaThemeColor" group_name="misc" title="Meta theme color" description="This sets the theme color used for PWA installations, as well as the address bar color on Chrome for Android." property_type="value" value_type="color" has_variations="1" depends_on="" value_group="" display_order="900" addon_id="XF">
+      <value>{
+    "default": "#969696",
+    "alternate": "#969696"
+}</value>
+    </property>
+    <property property_name="nodeIconReadColor" group_name="nodeList" title="Read node icon color" description="When the content within a node has been read, its icon will revert to a less attention-grabbing color, defined here" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="" display_order="200" addon_id="XF">
+      <value>{
+    "default": "#d4d4d4",
+    "alternate": "#d4d4d4"
+}</value>
+    </property>
+    <property property_name="nodeIconUnreadColor" group_name="nodeList" title="Unread node icon color" description="Node icons give an at-a-glance indication of whether or not the content housed within the node has been read. The unread icon color should stand out from its background for quick identification" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="" display_order="100" addon_id="XF">
+      <value>{
+    "default": "#6a6a6a",
+    "alternate": "#6a6a6a"
+}</value>
+    </property>
+    <property property_name="buttonBg" group_name="color" title="Default button background color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="buttons" display_order="8200" addon_id="XF">
+      <value>{
+    "default": "#d6d6d6",
+    "alternate": "#d6d6d6"
+}</value>
+    </property>
+    <property property_name="buttonTextColor" group_name="color" title="Default button text color" description="" property_type="value" value_type="color" has_variations="1" depends_on="" value_group="buttons" display_order="8100" addon_id="XF">
+      <value>{
+    "default": "#222222",
+    "alternate": "#222222"
+}</value>
+    </property>
+    <property property_name="publicHeader" group_name="headerNav" title="Header/logo row" description="The header row contains your logo and sits at the top of every public page" property_type="css" value_type="" has_variations="" depends_on="" value_group="" display_order="20000" css_components="text,background,extra" addon_id="XF">
+      <value>{
+    "color": "#9a9a9a",
+    "background-color": "#969696"
+}</value>
+    </property>
+    <property property_name="publicNav" group_name="headerNav" title="Navigation row" description="The navigation row sits below the header and contains the primary site navigation tabs and menus" property_type="css" value_type="" has_variations="" depends_on="" value_group="" display_order="20100" css_components="text,background,extra" addon_id="XF">
+      <value>{
+    "color": "#222222",
+    "background-color": "#c4c1c4"
+}</value>
+    </property>
+    <property property_name="publicFooter" group_name="footer" title="Footer" description="The footer is the primary element that sits below the main content on all public pages" property_type="css" value_type="" has_variations="" depends_on="" value_group="" display_order="20000" css_components="text,background,border,extra" addon_id="XF">
+      <value>{
+    "color": "#222222",
+    "background-color": "#c4c1c4"
+}</value>
+    </property>
+    <property property_name="publicFooterLink" group_name="footer" title="Footer links" description="Controls styling for individual links within the footer" property_type="css" value_type="" has_variations="" depends_on="" value_group="" display_order="20100" css_components="text,extra" addon_id="XF">
+      <value>{
+    "color": "#7a7a7a"
+}</value>
+    </property>
+    <property property_name="fontFamilyUi" group_name="fonts" title="User Interface Font" description="The font list for your main text" property_type="value" value_type="string" has_variations="" depends_on="" value_group="font" display_order="100" addon_id="XF">
+      <value>"Verdana, Tahoma, Geneva, sans-serif"</value>
+    </property>
+    <property property_name="fontFamilyBody" group_name="fonts" title="Body Text Font" description="This font is used for the text of messages etc." property_type="value" value_type="string" has_variations="" depends_on="" value_group="font" display_order="200" addon_id="XF">
+      <value>"Verdana, Tahoma, Geneva, sans-serif"</value>
+    </property>
+  </properties>
+</style>
